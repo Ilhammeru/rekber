@@ -1,0 +1,71 @@
+Project Rekber {
+    database_type: 'MySql',
+}
+
+Table users {
+    id varchar [pk, increment]
+    first_name varchar [not null]
+    last_name varchar [not null]
+    email varchar [not null, unique]
+    phone varchar [not null, unique]
+    address text [not null]
+    country_id int
+    state_id int
+    city_id int
+    postalcode int
+    email_otp tinyint
+    phone_otp tinyint
+    total_saldo longtext [note: 'json type with format: {_type_: _saldo, _type_: _saldo_}']
+    email_verified_at timestamp
+    phone_verified_at timestamp
+    kyc_verified_at timestamp
+    status tinyint [note: '1 for active, 2 for banned, 3 for unactive']
+    last_login_at timestamp
+    created_at timestamp
+    updated_at timestamp
+}
+
+Table user_saldo {
+    id varchar [pk, increment]
+    user_id varchar [ref: > users.id]
+    debit double [not null]
+    credit double [not null]
+    note text
+    type tinyint [note: '1 for PPOB, 2 for rekber']
+    created_at timestamp
+    updated_at timestamp
+}
+
+Table user_login_histories {
+    id varchar [pk, increment]
+    user_id varchar [ref: > users.id]
+    login_at timestamp [not null]
+}
+
+Table categories {
+    id varchar [pk, increment]
+    name varchar [not null]
+    status boolean [not null, default: true]
+    created_at timestamp
+    updated_at timestamp
+}
+
+Table settings {
+    id varchar [pk, increment]
+    type tinyint [note: '1 for general setting, 2 for system config, 3 for logo']
+    key varchar
+    value varchar
+    description text
+    created_at timestamp
+    updated_at timestamp
+}
+
+Table transactions {
+    id varchar [pk, increment]
+    user_id varchar [ref: > users.id]
+    type tinyint [note: '1 for deposit, 2 for withdrawals, 3 for rekber transaction']
+    debit double
+    credit double
+
+}
+
