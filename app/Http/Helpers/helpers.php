@@ -195,3 +195,10 @@ if (!function_exists('formatWhatsappNumber')) {
         return $number;
     }
 }
+
+if (!function_exists('now_time')) {
+    function now_time()
+    {
+        return Carbon::now()->tz(env('TIMEZONE'));
+    }
+}

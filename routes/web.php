@@ -80,7 +80,9 @@ Route::get('/password-request', function() {
 
 // auth
 Route::get('/register', [RegisterController::class, 'index'])->name('register');
-Route::get('register/otp/{email}', [RegisterController::class, 'otpForm'])->name('register.otp');
+Route::get('register/otp', [RegisterController::class, 'otpForm'])->name('register.otp');
+Route::post('otp/whatsapp/validate', [RegisterController::class, 'submitOtpWhatsapp']);
 Route::post('register/otp/{email}', [RegisterController::class, 'submitOtp'])->name('register.otp.store');
 Route::post('/register', [RegisterController::class, 'submit'])->name('register.store');
+Route::post('otp/send', [RegisterController::class, 'sendOtp'])->name('otp.send');
 

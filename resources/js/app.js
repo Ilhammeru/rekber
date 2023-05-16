@@ -18,6 +18,7 @@ const handleSuccess = (message) => {
 }
 
 const handleError = (err) => {
+    console.log('status',err.status);
     if (err.status == 422) {
         return handleValidationError(err);
     } else {

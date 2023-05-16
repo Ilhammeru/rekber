@@ -13,8 +13,10 @@ use App\Models\Serial;
 use App\Models\SerialLog;
 use App\Models\ServiceCode;
 use App\Models\UserNetwork;
+use App\Services\Otp;
 use App\Services\RegisterService;
 use App\Services\Whatsapp;
+use App\Services\Zenziva;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -87,7 +89,14 @@ class RegisterController extends Controller
 
             EmailOtpJob::dispatch($user);
 
-            return $this->success(__('global.otp_send'), ['url' => route('register.otp', encrypt($user->email))]);
+            return $this->success(
+                __('global.otp_send'),
+                [
+                    'url' => route(
+                        url('register/otp/?via=email&g=' . encrypt($user->email))
+                    )
+                ]
+            );
         } catch (\Throwable $th) {
 
             return $this->error($this->messageError($th));
@@ -99,18 +108,31 @@ class RegisterController extends Controller
      *
      * @return JsonResponse
      */
-    public function otpForm($email)
+    public function otpForm()
     {
+        $email = request()->get('g');
+        $via = request()->get('via');
+
+        $check_key = 'email_verified_at';
+        if ($via == 'whatsapp') {
+            $check_key = 'phone_verified_at';
+        }
+
         // check email verification
         $real = decrypt($email);
-        $data = User::select('email_verified_at')
+        $data = User::select($check_key, 'phone')
             ->where('email', $real)
             ->first();
+        $phone = $data->phone;
 
-        if ($data->email_verified_at) {
-            return view('auth.otp_verified');
+        if ($data->$check_key) {
+            return view('auth.otp_verified',compact('via'));
         }
-        return view('auth.otp', compact('email'));
+        if ($via == 'email') {
+            return view('auth.otp', compact('email'));
+        } else {
+            return view('auth.otp_whatsapp', compact('email', 'phone'));
+        }
     }
 
     public function submitOtp(Request $request, $email)
@@ -130,5 +152,51 @@ class RegisterController extends Controller
         $data->save();
 
         return $this->success(__('global.email_verified') . '. ' . __('global.redirecting_login'), ['url' => route('login')]);
+    }
+
+    /**
+     * Function to validate OTP via whatsapp
+     * @param \Illuminate\Http\Request
+     * @param \App\Services
+     *
+     * @return JsonResponse
+     */
+    public function submitOtpWhatsapp(Request $request, Otp $service)
+    {
+        $email = $request->email;
+        $otp = $request->otp;
+
+        if (!$otp) {
+            return $this->buildValidationError(['otp' => [__("global.otp_required")]]);
+        }
+
+        $verify = $service->validate('phone', $otp, $email);
+        if (!$verify) {
+            return $this->buildValidationError(['otp' => [__("global.otp_mismatch")]]);
+        }
+
+        return $this->success(__('global.phone_verified') . '. ' . __('global.redirecting_login'), ['url' => route('login')]);
+    }
+
+    /**
+     * Function to send otp via whatsapp
+     * @return JsonResponse
+     */
+    public function sendOtp(Request $request, Zenziva $service)
+    {
+        $phone = $request->phone;
+        $otp = generate_otp();
+
+        $send = $service->send_message('whatsapp', $phone, 'Kode verifikasi anda ' . $otp);
+
+        // save otp if success
+        if ($send['status'] == 200) {
+            User::where('phone', $phone)
+                ->update([
+                    'phone_otp' => $otp,
+                ]);
+        }
+
+        return $this->success(__('otp_send_wa'));
     }
 }

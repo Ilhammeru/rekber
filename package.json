@@ -21,6 +21,7 @@
         "sass-loader": "^11.0.1"
     },
     "dependencies": {
+        "easytimer.js": "^4.5.4",
         "gasparesganga-jquery-loading-overlay": "^2.1.7",
         "izitoast": "^1.4.0",
         "jquery": "^3.6.0"

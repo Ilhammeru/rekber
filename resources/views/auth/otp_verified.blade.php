@@ -44,7 +44,13 @@
     <!--end::Logo-->
     <!--begin::Wrapper-->
     <div class="w-lg-600px bg-body rounded shadow-sm p-10 p-lg-15 mx-auto body-register">
-        <h4 class="mb-5 text-center">@lang('global.email_has_been_verified')</h4>
+        <h4 class="mb-5 text-center">
+            @if ($via == 'email')
+                @lang('global.email_has_been_verified')
+            @else
+                @lang('global.phone_has_been_verified')
+            @endif
+        </h4>
 
         <a class="btn btn-primary w-100 mt-5" href="{{ route('login') }}">
             @lang('global.login')

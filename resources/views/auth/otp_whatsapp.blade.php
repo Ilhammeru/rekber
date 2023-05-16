@@ -50,12 +50,30 @@
     <!--begin::Wrapper-->
     <div class="w-lg-500px bg-body rounded shadow-sm p-10 p-lg-15 mx-auto body-register">
         <!--begin::Form-->
-            <form method="POST" action="#" id="form-otp">
+            <form method="POST" action="#" id="form-otp-whatsapp">
                 <div class="text-center mb-5">
                     <h3>@lang('global.insert_otp')</h3>
                 </div>
 
                 <div class="form-group mb-3">
+                    <label for="whatsapp" class="form-label">@lang('global.phone')</label>
+                    <div class="d-flex align-items gap-4">
+                        <x-form.text
+                            error="whatsapp"
+                            name="whatsapp"
+                            id="whatsapp"
+                            :text="__('global.whatsapp')"
+                            className="text-center phoneFormat"
+                            value="{{ $phone }}">
+                        </x-form.text>
+                        <button class="btn btn-success w-50"
+                            type="button"
+                            id="send-otp-whatsapp-btn"
+                            onclick="sendOtp('{{ $phone }}')">@lang('global.send') @lang('global.otp')</button>
+                    </div>
+                </div>
+
+                <div class="form-group mb-3 d-none" id="row-otp-whatsapp">
                     <x-form.text
                         error="otp"
                         id="otp"
@@ -71,16 +89,17 @@
                 <div class="form-group">
                     <button class="btn btn-primary w-100"
                         id="btn-submit-otp"
-                        onclick="verifiedEmailOtp()"
-                        type="button">
+                        disabled
+                        type="button"
+                        onclick="verifiedPhoneOtp()">
                         @lang('global.send')
                     </button>
                 </div>
 
                 <!--begin::Link-->
                 <div class="text-gray-400 fw-bold fs-4 mt-3">
-                    @lang('global.dont_receiver_email_otp') @lang('global.send_via')
-                    <a href="{{ url('register/otp?via=whatsapp&g=' . $email) }}" class="link-primary fw-bolder">Whatsapp</a>
+                    @lang('global.back_to_email_verification')
+                    <a href="{{ url('register/otp?via=email&g=' . $email) }}" class="link-primary fw-bolder">@lang('global.here')</a>
                 </div>
                 <!--end::Link-->
 
