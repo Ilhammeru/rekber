@@ -19,6 +19,11 @@ class DatabaseSeeder extends Seeder
         $this->call([
             EmailSettingSeeder::class,
             CompanySettingSeeder::class,
+            CategorySeeder::class,
+            IndoRegionSeeder::class,
+            CountrySeeder::class,
+            RolePermissionSeeder::class,
+            CreateUserSeeder::class,
         ]);
     }
 }

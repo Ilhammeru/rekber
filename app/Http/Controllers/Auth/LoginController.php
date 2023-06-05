@@ -203,7 +203,7 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         $this->guard()->logout();
-
+        session()->forget('user_data');
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();

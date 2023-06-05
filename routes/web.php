@@ -1,6 +1,10 @@
 <?php
 
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DepositController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 
@@ -66,10 +70,7 @@ Route::get('/template/profile', function() {
 
 Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
 Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
-Route::get('/dashboard', function() {
-    $pageTitle = "Dashboard";
-    return view('dashboard', compact('pageTitle'));
-})->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 Route::get('/password-email', function() {
     return 'password email';
@@ -85,4 +86,29 @@ Route::post('otp/whatsapp/validate', [RegisterController::class, 'submitOtpWhats
 Route::post('register/otp/{email}', [RegisterController::class, 'submitOtp'])->name('register.otp.store');
 Route::post('/register', [RegisterController::class, 'submit'])->name('register.store');
 Route::post('otp/send', [RegisterController::class, 'sendOtp'])->name('otp.send');
+
+Route::middleware('auth')->group(function () {
+    // CATEGORY
+    Route::get('categories/ajax', [CategoryController::class, 'ajax'])->name('categories.ajax');
+    Route::get('categories/change-status/{id}/{status}', [CategoryController::class, 'updateStatus']);
+    Route::resource('categories', CategoryController::class);
+
+    // USERS
+    Route::get('users/{status}', [UserController::class, 'index'])->name('users.index');
+    Route::get('users/show/{id}', [UserController::class, 'show'])->name('users.show');
+    Route::get('users/transactions/{id}', [UserController::class, 'transactions'])->name('users.transactions');
+    Route::get('users/logins/{id}', [UserController::class, 'logins'])->name('users.logins');
+    Route::get('users/login/{id}', [UserController::class, 'login'])->name('users.login');
+    Route::get('users/balance/{id}/{type}', [UserController::class, 'balanceForm'])->name('users.add-deduct-balance');
+    Route::post('users/balance/{id}', [UserController::class, 'addDeductBalance'])->name('users.balance-add-deduct');
+    Route::get('users/update-balance/{id}', [UserController::class, 'updateBalance'])->name('users.update-balance');
+    Route::put('users/{id}', [UserController::class, 'update'])->name('users.update');
+    Route::get('users/ajax/{status}', [UserController::class, 'ajax'])->name('users.ajax');
+    Route::get('users/ajax-transaction/{id}', [UserController::class, 'ajaxTransaction'])->name('users.ajax-transaction');
+    Route::get('users/ajax-login-history/{id}', [UserController::class, 'ajaxLoginHistory'])->name('users.ajax-login-history');
+
+    // Deposit
+    Route::get('deposit/ajax', [DepositController::class, 'ajax'])->name('deposit.ajax');
+    Route::resource('deposit', DepositController::class);
+});
 

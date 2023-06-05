@@ -24,6 +24,7 @@
         "easytimer.js": "^4.5.4",
         "gasparesganga-jquery-loading-overlay": "^2.1.7",
         "izitoast": "^1.4.0",
-        "jquery": "^3.6.0"
+        "jquery": "^3.6.0",
+        "tippy.js": "^6.3.7"
     }
 }
