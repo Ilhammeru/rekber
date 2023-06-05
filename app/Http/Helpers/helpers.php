@@ -202,3 +202,51 @@ if (!function_exists('now_time')) {
         return Carbon::now()->tz(env('TIMEZONE'));
     }
 }
+
+if (!function_exists('active_menu')) {
+    function active_menu(array $names)
+    {
+        if (in_array(request()->segment(1), $names)) {
+            return 'active';
+        }
+    }
+}
+
+if (!function_exists('show_menu')) {
+    function show_menu(array $names)
+    {
+        if (in_array(request()->segment(1), $names)) {
+            return 'show';
+        }
+    }
+}
+
+if (!function_exists('getRealIP')) {
+    function getRealIP() {
+        $ip = $_SERVER["REMOTE_ADDR"];
+        //Deep detect ip
+        if (filter_var(@$_SERVER['HTTP_FORWARDED'], FILTER_VALIDATE_IP)) {
+            $ip = $_SERVER['HTTP_FORWARDED'];
+        }
+        if (filter_var(@$_SERVER['HTTP_FORWARDED_FOR'], FILTER_VALIDATE_IP)) {
+            $ip = $_SERVER['HTTP_FORWARDED_FOR'];
+        }
+        if (filter_var(@$_SERVER['HTTP_X_FORWARDED_FOR'], FILTER_VALIDATE_IP)) {
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        }
+        if (filter_var(@$_SERVER['HTTP_CLIENT_IP'], FILTER_VALIDATE_IP)) {
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        }
+        if (filter_var(@$_SERVER['HTTP_X_REAL_IP'], FILTER_VALIDATE_IP)) {
+            $ip = $_SERVER['HTTP_X_REAL_IP'];
+        }
+        if (filter_var(@$_SERVER['HTTP_CF_CONNECTING_IP'], FILTER_VALIDATE_IP)) {
+            $ip = $_SERVER['HTTP_CF_CONNECTING_IP'];
+        }
+        if ($ip == '::1') {
+            $ip = '127.0.0.1';
+        }
+
+        return $ip;
+    }
+}

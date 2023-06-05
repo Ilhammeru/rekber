@@ -60,12 +60,27 @@ Table settings {
     updated_at timestamp
 }
 
-Table transactions {
-    id varchar [pk, increment]
-    user_id varchar [ref: > users.id]
-    type tinyint [note: '1 for deposit, 2 for withdrawals, 3 for rekber transaction']
-    debit double
-    credit double
-
+Table Wallets {
+    id bigint [pk, increment]
+    holder_type varchar [not null, note: 'Will be filled with model class value or other']
+    holder_id char [not null, note: 'Related to users id']
+    name varchar [not null]
+    slug varchar [not null]
+    uuid char [not null]
+    description varchar
+    balance double [note: 'decimal 64,0', default: '0']
+    created_at timestamp
+    updated_at timestamp
 }
 
+Table transactions {
+    uuid char [not null, unique, increment]
+    payable_type varchar [not null]
+    payable_id char [not null, note: 'Related to user id']
+    wallet_id bigint [not null]
+    type enum [note: 'withdraw, deposit']
+    amount double [note: 'decimal 64,0']
+    confirmed boolean
+    created_at timestamp
+    updated_at timestamp
+}

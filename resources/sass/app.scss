@@ -5,4 +5,160 @@
 @import 'variables';
 
 // Bootstrap
-@import '~bootstrap/scss/bootstrap';
+// @import '~bootstrap/scss/bootstrap';
+
+:root {
+    --orange: #FB9C2B;
+    --purple: #512BFB;
+    --light-red: #FB5B5B;
+}
+
+.text-dark-grey {
+    color: #27374D !important;
+}
+
+.text-black {
+    color: #000 !important;
+}
+
+.text-orange {
+    color: var(--orange) !important;
+}
+
+.text-purple {
+    color: var(--purple) !important;
+}
+
+.text-light-red {
+    color: var(--light-red) !important;
+}
+
+.fs-12 {
+    font-size: 12px !important;
+}
+
+.fs-14 {
+    font-size: 14px !important;
+}
+
+.fs-10 {
+    font-size: 10px !important;
+}
+
+.bg-orange {
+    background-color: var(--orange) !important;
+}
+
+.bg-purple {
+    background-color: var(--purple) !important;
+}
+
+.bg-light-red {
+    background-color: var(--light-red) !important;
+}
+
+.bg-dark-grey {
+    background-color: #8A8989 !important;
+}
+
+.border-orange {
+    border: 1px solid var(--orange) !important;
+}
+
+.border-purple {
+    border: 1px solid var(--purple) !important;
+}
+
+.border-light-red {
+    border: 1px solid var(--light-red) !important;
+}
+
+.border-warning {
+    border: 1px solid #ffc700!important;
+}
+
+.min-height-auto {
+    min-height: auto !important;
+}
+
+.tiny-card {
+    box-shadow: 0 4px 10px #38414a0f !important;
+}
+
+.tiny-card .card-body {
+    padding: 15px 15px !important;
+}
+
+.tiny-card .box-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    border-radius: 10px;
+
+    img {
+        width: 40px !important;
+        height: 40px !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.tiny-card .action-card {
+    top: 1px;
+    right: 5px;
+
+    &-box {
+        border-radius: 5px;
+        padding: 0 5px;
+        transition: ease .2s;
+    }
+}
+
+.hover-bg-success:hover {
+    background-color: rgb(80,205,137,1) !important;
+    color: #fff !important;
+}
+
+.hover-bg-warning:hover {
+    background-color: #ffc700 !important;
+    color: #fff !important;
+}
+
+.hover-bg-orange:hover {
+    background-color: var(--orange) !important;
+    color: #fff !important;
+}
+
+.hover-bg-purple:hover {
+    background-color: var(--purple) !important;
+    color: #fff !important;
+}
+
+.hover-bg-light-red:hover {
+    background-color: var(--light-red) !important;
+    color: #fff !important;
+}
+
+/**
+    SPINNER
+**/
+
+.spinner-text {
+    margin-left: 10px;
+    width: 4.8px;
+    height: 4.8px;
+    border-radius: 4.8px;
+    box-shadow: 12px 0px 0 0 rgba(71,75,255,0.2), 9.7px 7.1px 0 0 rgba(71,75,255,0.4), 3.7199999999999998px 11.4px 0 0 rgba(71,75,255,0.6), -3.7199999999999998px 11.4px 0 0 rgba(71,75,255,0.8), -9.7px 7.1px 0 0 #474bff;
+    animation: spinner-b87k6z 1s infinite linear;
+ }
+
+ @keyframes spinner-b87k6z {
+    to {
+       transform: rotate(360deg);
+    }
+ }
+

@@ -2,17 +2,21 @@
 
 namespace App\Models;
 
+use App\Traits\HasWallet;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, HasUuids;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, HasUuids, HasWallet, HasRoles;
 
     const ACTIVE = 1;
     const BANNED = 2;
@@ -44,6 +48,44 @@ class User extends Authenticatable
         'status',
         'last_login_at',
         'deleted_at',
+        'is_two_factor',
     ];
+
+    public function fullname(): Attribute
+    {
+        $res = '-';
+        if ($this->first_name) {
+            $res = $this->first_name;
+
+            if ($this->last_name) {
+                $res = $res . ' ' . $this->last_name;
+            }
+        }
+        return Attribute::make(
+            get: fn() => $res,
+        );
+    }
+
+    public function balance(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => number_format($this->currentBalance()) ?? 0,
+        );
+    }
+
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Country::class, 'country_id', 'id');
+    }
+
+    public function state():BelongsTo
+    {
+        return $this->belongsTo(Province::class, 'state_id', 'id');
+    }
+
+    public function city(): BelongsTo
+    {
+        return $this->belongsTo(Regency::class, 'city_id', 'id');
+    }
 
 }

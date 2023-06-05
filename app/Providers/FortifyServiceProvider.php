@@ -11,10 +11,13 @@ use App\Models\UserLoginHistory;
 use Carbon\Carbon;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Fortify\Fortify;
+use Stevebauman\Location\Facades\Location;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -33,18 +36,17 @@ class FortifyServiceProvider extends ServiceProvider
     {
         // custom login
         Fortify::authenticateUsing(function (Request $request) {
-            $user = User::where('username', $request->username)->first();
+            /**
+             * User 'BINARY {field}' to handle case sensitive in laravel query
+             */
+            $user = User::where(DB::raw('BINARY `username`'), $request->username)->first();
 
             if (
                 $user &&
                 Hash::check($request->password, $user->password)
                 ) {
-                    // save log history
-                    UserLoginHistory::firstOrCreate([
-                        'user_id' => $user->id,
-                        'login_at' => now_time(),
-                    ]);
-
+                    session()->put('session_save_history', true);
+                    session()->put('user_data', $user);
                     return $user;
             }
         });

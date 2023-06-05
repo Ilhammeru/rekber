@@ -19,6 +19,15 @@ class Controller extends BaseController
         ], 200);
     }
 
+    public function notify($data)
+    {
+        if ($data['status'] == 200) {
+            return $this->success($data['message'], $data['data']);
+        } else {
+            return $this->error($data['message'], $data['data'] ?? []);
+        }
+    }
+
     public function error($message, $data = [])
     {
         return response()->json([

@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Services;
+
+use Illuminate\Database\Eloquent\Model;
+
+class {{class}} extends Service
+{
+
+    public function model(): Model
+    {
+        // Object Model
+    }
+
+    public function datatable($request)
+    {
+
+    }
+
+    public function all()
+    {
+
+    }
+
+    public function show($id)
+    {
+
+    }
+
+    public function update($request, $id)
+    {
+
+    }
+
+    public function store($request)
+    {
+
+    }
+
+    public function destroy($id)
+    {
+
+    }
+}

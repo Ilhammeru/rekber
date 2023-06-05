@@ -19,11 +19,15 @@
 	<!--begin::Page Vendor Stylesheets(used by this page)-->
 	<link href="{{ asset('css/datatables.min.css') }}" rel="stylesheet" type="text/css" />
 	{{-- <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet" type="text/css" /> --}}
+
+    {{-- font awesome kit --}}
+    <script src="https://kit.fontawesome.com/51783b8c07.js" crossorigin="anonymous"></script>
+
 	<!--end::Page Vendor Stylesheets-->
 	@stack('styles')
 
-    {{-- <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet"> --}}
+    <!-- Styles -->
+    <link href="{{ mix('css/app.css') }}" rel="stylesheet">
 </head>
 <body id="kt_body" class="header-tablet-and-mobile-fixed aside-enabled">
     <!--begin::Main-->
@@ -42,16 +46,33 @@
 						<div class="post d-flex flex-column-fluid" id="kt_post">
 							<!--begin::Container-->
 							<div id="kt_content_container" class="container-xxl">
-							
+
 								@yield('content')
-							
+
 							</div>
 							<!--end::Container-->
 						</div>
 						<!--end::Post-->
 					</div>
 					<!--end::Content-->
-					
+
+                    <!-- Global Modal -->
+                    <!-- Modal -->
+                    <div class="modal fade" id="globalModal" tabindex="-1" aria-labelledby="globalModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="globalModalLabel">Title</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body"></div>
+                            <div class="modal-footer"></div>
+                        </div>
+                        </div>
+                    </div>
+                    <!-- End: Global Modal -->
+
+
                     @include('partials.footer')
 				</div>
 				<!--end::Wrapper-->
@@ -74,7 +95,11 @@
 	<!--end::Main-->
 
 	@include('partials.notify')
-    
+
+    <script src="/js/lang.js"></script>
+
+    <script src="{{ mix('js/app.js') }}"></script>
+
     <!--begin::Global Javascript Bundle(used by all pages)-->
     <script src="{{ asset('js/plugins.bundle.js') }}"></script>
     <script src="{{ asset('js/scripts.bundle.js') }}"></script>
@@ -110,9 +135,8 @@
         });
 	</script>
 	@stack('scripts')
-    
-    {{-- <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script> --}}
+
+    {{-- <!-- Scripts --> --}}
 
 </body>
 </html>
