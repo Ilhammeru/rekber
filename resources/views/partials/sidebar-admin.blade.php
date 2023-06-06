@@ -10,7 +10,7 @@
         <span class="menu-title">@lang('global.category')</span>
     </a>
 </div>
-<div data-kt-menu-trigger="click" class="menu-item menu-accordion {{ show_menu(['users']) }}">
+<div data-kt-menu-trigger="click" class="menu-item menu-accordion {{ \Request::segment(1) == 'users' ? 'show' : '' }}">
     <span class="menu-link">
         <span class="menu-icon">
             <!--begin::Svg Icon | path: assets/media/icons/duotune/communication/com014.svg-->

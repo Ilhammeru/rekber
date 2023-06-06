@@ -38,6 +38,7 @@ function handleValidationError(err) {
         if ($('#' + k)) {
             $('#' + k).addClass('is-invalid');
             $('#error-' + k).text(error[k].join(', '));
+            $('#error-' + k).addClass('d-block');
         }
     }
 }
@@ -48,6 +49,7 @@ function removeValidation(formId) {
         let id = form[a].id;
         if (id) {
             $('#' + id).removeClass('is-invalid');
+            $('#error-' + id).removeClass('d-block');
         }
     }
 
@@ -129,3 +131,4 @@ window.openGlobalModal = openGlobalModal;
 window.footerModal = footerModal;
 window.closeGlobalModal = closeGlobalModal;
 window.addSpinnerText = addSpinnerText;
+window.Confirm = Confirm;
