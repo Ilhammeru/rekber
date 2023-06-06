@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Notifications\ManualUserNotification;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -25,6 +26,8 @@ class UserController extends Controller
      */
     public function index($status)
     {
+        $user = \App\Models\User::find('f5509d78-9466-4135-ac04-3ca63b507177');
+        // $user->notify(new ManualUserNotification());
         $pageTitle = __('global.users');
         return view('users.index', compact('status', 'pageTitle'));
     }
@@ -44,6 +47,11 @@ class UserController extends Controller
         return $this->service->datatableLoginHistory($id);
     }
 
+    public function ajaxNotification($id)
+    {
+        return $this->service->datatableNotification($id);
+    }
+
     public function logins($id)
     {
         $pageTitle = __('global.user') . ' ' . __("global.logins");
@@ -54,6 +62,32 @@ class UserController extends Controller
     {
         Auth::loginUsingId(decrypt($id));
         return to_route('dashboard');
+    }
+
+    public function notificationForm($id)
+    {
+        $user = $this->service->show($id);
+        $pageTitle = __("global.notification_sent_to") . ' ' . $user->username;
+
+        return view('users.notification-form', compact('pageTitle', 'id', 'user'));
+    }
+
+    public function sendNotification(Request $request, $id)
+    {
+        $this->validate($request, [
+            'subject' => 'required',
+            'message' => 'required',
+        ]);
+
+        return $this->notify($this->service->sendNotification($request, $id));
+    }
+
+    public function notification($id)
+    {
+        $user = $this->service->show($id);
+        $pageTitle = __("global.notification_sent_to") . ' ' . $user->username;
+
+        return view('users.notification', compact('pageTitle', 'id', 'user'));
     }
 
     public function banUserForm($id)
@@ -70,6 +104,11 @@ class UserController extends Controller
         ]);
 
         return $this->notify($this->service->ban($request, $id));
+    }
+
+    public function unbanUser($id)
+    {
+        return $this->notify($this->service->unban($id));
     }
 
     /**
