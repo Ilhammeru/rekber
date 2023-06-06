@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Schema;
 return new class() extends Migration {
     public function up(): void
     {
-        Schema::create($this->table(), function (Blueprint $table) {
+        Schema::create('transactions', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->morphs('payable');
             $table->unsignedBigInteger('wallet_id');
@@ -34,11 +34,6 @@ return new class() extends Migration {
 
     public function down(): void
     {
-        Schema::drop($this->table());
-    }
-
-    private function table(): string
-    {
-        return (new Transaction())->getTable();
+        Schema::dropIfExists('table');('transactions');
     }
 };

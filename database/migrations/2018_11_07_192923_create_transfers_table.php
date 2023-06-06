@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Schema;
 return new class() extends Migration {
     public function up(): void
     {
-        Schema::create($this->table(), function (Blueprint $table) {
+        Schema::create('transfers', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->morphs('from');
             $table->morphs('to');
@@ -43,13 +43,13 @@ return new class() extends Migration {
 
             $table->foreign('deposit_id')
                 ->references('id')
-                ->on($this->transactionTable())
+                ->on('transactions')
                 ->onDelete('cascade')
             ;
 
             $table->foreign('withdraw_id')
                 ->references('id')
-                ->on($this->transactionTable())
+                ->on('transactions')
                 ->onDelete('cascade')
             ;
         });
@@ -57,16 +57,6 @@ return new class() extends Migration {
 
     public function down(): void
     {
-        Schema::drop($this->table());
-    }
-
-    private function table(): string
-    {
-        return (new Transfer())->getTable();
-    }
-
-    private function transactionTable(): string
-    {
-        return (new Transaction())->getTable();
+        Schema::dropIfExists('transfers');
     }
 };
