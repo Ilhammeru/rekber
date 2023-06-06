@@ -110,6 +110,8 @@ class Tripay {
         $tripayReference = $data->reference;
         $status = strtoupper((string) $data->status);
 
+        Log::debug('data callback', [$data]);
+
         if ($data->is_closed_payment === 1) {
             return [
                 'success' => true,
