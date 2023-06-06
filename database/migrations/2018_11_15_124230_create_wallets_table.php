@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Schema;
 return new class() extends Migration {
     public function up(): void
     {
-        Schema::create($this->table(), function (Blueprint $table) {
+        Schema::create('wallets', function (Blueprint $table) {
             $table->bigIncrements('id');
             // $table->morphs('holder');
             $table->string('holder_type');
@@ -40,10 +40,10 @@ return new class() extends Migration {
             $table->unique(['holder_type', 'holder_id', 'slug']);
         });
 
-        Schema::table($this->transactionTable(), function (Blueprint $table) {
+        Schema::table('transactions', function (Blueprint $table) {
             $table->foreign('wallet_id')
                 ->references('id')
-                ->on($this->table())
+                ->on('wallets')
                 ->onDelete('cascade')
             ;
         });
@@ -52,16 +52,6 @@ return new class() extends Migration {
     public function down(): void
     {
         Schema::disableForeignKeyConstraints();
-        Schema::drop($this->table());
-    }
-
-    protected function table(): string
-    {
-        return (new Wallet())->getTable();
-    }
-
-    private function transactionTable(): string
-    {
-        return (new Transaction())->getTable();
+        Schema::dropIfExists('wallets');
     }
 };
