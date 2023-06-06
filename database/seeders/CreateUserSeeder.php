@@ -21,6 +21,18 @@ class CreateUserSeeder extends Seeder
         DB::beginTransaction();
         try {
             $userRole = Role::findByName('user');
+            $adminRole = Role::findByName('admin');
+
+            $admin = new User();
+            $admin->id = uuid_create();
+            $admin->username = 'ilhammeru';
+            $admin->email = 'ilham@gmail.com';
+            $admin->password = Hash::make('Ilham..123');
+            $admin->first_name = 'Ilham';
+            $admin->last_name = 'Meru';
+            $admin->phone = '6285795327357';
+            $admin->save();
+            $admin->assignRole($adminRole);
 
             $buyer = new User();
             $buyer->id = uuid_create();
