@@ -8,6 +8,7 @@ use App\Models\UserLoginHistory;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
 
 class UserService extends Service
@@ -90,18 +91,35 @@ class UserService extends Service
 
     public function datatable($request)
     {
-        $query = $this->model();
+        $query = $this->model()->query();
 
         if ($request['status'] == 'active') {
-            $query->status = User::ACTIVE;
+            $query->where('email_verified_at', '!=', null)
+                ->where('phone_verified_at', '!=', null)
+                ->where('kyc_verified_at', '!=', null)
+                ->where('status', User::ACTIVE);
         }
 
+        Log::debug('query', [$query]);
+
         if ($request['status'] == 'banned') {
-            $query->status = User::BANNED;
+            $query->where('status', User::BANNED);
         }
 
         if ($request['status'] == 'inactive') {
-            $query->status = User::INACTIVE;
+            $query->where('status', User::INACTIVE);
+        }
+
+        if ($request['status'] == 'ue') {
+            $query->where('email_verified_at', null);
+        }
+
+        if ($request['status'] == 'up') {
+            $query->where('phone_verified_at', null);
+        }
+
+        if ($request['status'] == 'uk') {
+            $query->where('kyc_verified_at', null);
         }
 
         $data = $query->get();

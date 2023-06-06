@@ -27,11 +27,19 @@
     </span>
     <div class="menu-sub menu-sub-accordion">
         <div class="menu-item">
-            <a class="menu-link {{ active_menu(['users']) }}" href="{{ route('users.index', 'active') }}">
+            <a class="menu-link {{ \Request::segment(2) == 'active' ? 'active' : '' }}" href="{{ route('users.index', 'active') }}">
                 <span class="menu-bullet">
                     <span class="bullet bullet-dot"></span>
                 </span>
                 <span class="menu-title">@lang('global.active') @lang('global.users')</span>
+            </a>
+        </div>
+        <div class="menu-item">
+            <a class="menu-link {{ \Request::segment(2) == 'banned' ? 'active' : '' }}" href="{{ route('users.index', 'banned') }}">
+                <span class="menu-bullet">
+                    <span class="bullet bullet-dot"></span>
+                </span>
+                <span class="menu-title">@lang('global.ban_user')</span>
             </a>
         </div>
     </div>
@@ -44,11 +52,11 @@
     </div>
 </div>
 
-<div data-kt-menu-trigger="click" class="menu-item menu-accordion {{ show_menu(['users']) }}">
+<div data-kt-menu-trigger="click" class="menu-item menu-accordion {{ show_menu([]) }}">
     <span class="menu-link">
         <span class="menu-icon">
             <span class="svg-icon svg-icon-2">
-                <i class="fa fa-credit-card-front"></i>
+                <i class="fa fa-money-bill"></i>
             </span>
         </span>
         <span class="menu-title">@lang('global.payment_gateaway')</span>
