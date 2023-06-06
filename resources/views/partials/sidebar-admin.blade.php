@@ -42,6 +42,30 @@
                 <span class="menu-title">@lang('global.ban_user')</span>
             </a>
         </div>
+        <div class="menu-item">
+            <a class="menu-link {{ \Request::segment(2) == 'ue' ? 'active' : '' }}" href="{{ route('users.index', 'ue') }}">
+                <span class="menu-bullet">
+                    <span class="bullet bullet-dot"></span>
+                </span>
+                <span class="menu-title">@lang('global.unverified') @lang('global.email')</span>
+            </a>
+        </div>
+        <div class="menu-item">
+            <a class="menu-link {{ \Request::segment(2) == 'up' ? 'active' : '' }}" href="{{ route('users.index', 'up') }}">
+                <span class="menu-bullet">
+                    <span class="bullet bullet-dot"></span>
+                </span>
+                <span class="menu-title">@lang('global.unverified') @lang('global.phone')</span>
+            </a>
+        </div>
+        <div class="menu-item">
+            <a class="menu-link {{ \Request::segment(2) == 'uk' ? 'active' : '' }}" href="{{ route('users.index', 'uk') }}">
+                <span class="menu-bullet">
+                    <span class="bullet bullet-dot"></span>
+                </span>
+                <span class="menu-title">@lang('global.unverified') @lang('global.kyc')</span>
+            </a>
+        </div>
     </div>
 </div>
 

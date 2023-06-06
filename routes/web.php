@@ -101,6 +101,8 @@ Route::middleware('auth')->group(function () {
     Route::get('users/login/{id}', [UserController::class, 'login'])->name('users.login');
     Route::get('users/balance/{id}/{type}', [UserController::class, 'balanceForm'])->name('users.add-deduct-balance');
     Route::post('users/balance/{id}', [UserController::class, 'addDeductBalance'])->name('users.balance-add-deduct');
+    Route::get('users/ban/{id}', [UserController::class, 'banUserForm'])->name('users.ban');
+    Route::post('users/do-ban/{id}', [UserController::class, 'banUser'])->name('users.do-ban');
     Route::get('users/update-balance/{id}', [UserController::class, 'updateBalance'])->name('users.update-balance');
     Route::put('users/{id}', [UserController::class, 'update'])->name('users.update');
     Route::get('users/ajax/{status}', [UserController::class, 'ajax'])->name('users.ajax');

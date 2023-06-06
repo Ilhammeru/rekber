@@ -250,6 +250,29 @@ const detailTransaction = (id) => {
     responseUrl(app_url + '/users/transactions/' + id);
 }
 
+const banUser = (id) => {
+    let form = $('#form-ban').serialize();
+    $.ajax({
+        type: 'POST',
+        url: app_url + '/users/do-ban/' + id,
+        data: form,
+        beforeSend: function () {
+            removeValidation('form-ban');
+            toggleLoading(true, i18n.global.processing);
+        },
+        success: function (res) {
+            toggleLoading(false);
+            handleSuccess(res.message);
+            closeGlobalModal();
+            responseUrl(app_url + '/users/show/' + res.data.id);
+        },
+        error: function (err) {
+            toggleLoading(false);
+            handleError(err);
+        }
+    })
+}
+
 $('#country').select2({
     selectionCssClass: 'form-control',
     placeholder: i18n.global.search + ' ' + i18n.global.country,
@@ -356,3 +379,4 @@ window.submitBalance = submitBalance;
 window.detailTransaction = detailTransaction;
 window.initTransactions = initTransactions;
 window.initLoginHistory = initLoginHistory;
+window.banUser = banUser;

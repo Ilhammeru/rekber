@@ -9,6 +9,7 @@ return [
     'detail_user' => 'Detail User',
     'description' => 'Description',
     'address' => 'Address',
+    'reason' => 'Reason',
     'add' => 'Add',
     'deduct' => 'Deduce',
     'country' => 'Country',
@@ -61,6 +62,7 @@ return [
     'device' => 'Device',
     'login_as_user' => 'Login as User',
     'ban_user' => 'Ban User',
+    'unban_user' => 'Unban User',
     'info_of' => 'Information of',
     'submit' => 'Submit',
     'notifications' => 'Notifications',
@@ -120,4 +122,5 @@ return [
     'success_update_category' => 'Success update category',
     'success_delete_item' => 'Success delete item',
     'success_update_user' => 'Success update user data',
+    'success_update_user_status' => 'Success update status user',
 ];
