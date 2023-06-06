@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Transaction;
 use App\Models\User;
+use App\Models\UserBan;
 use App\Models\UserLoginHistory;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -171,6 +172,25 @@ class UserService extends Service
             ->find($id);
 
         return $user;
+    }
+
+    public function ban(Request $request, $id)
+    {
+        $user = $this->model()->find(decrypt($id));
+        $user->status = User::BANNED;
+
+        if ($user->save()) {
+            $ban = new UserBan();
+            $ban->user_id = decrypt($id);
+            $ban->reason = $request->reason;
+            $ban->save();
+        }
+
+        return [
+            'message' => __('global.success_update_user_status'),
+            'data' => ['id' => $id],
+            'status' => 200,
+        ];
     }
 
     public function update($request, $id)

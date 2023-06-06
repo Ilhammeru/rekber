@@ -37,11 +37,24 @@
             @lang('global.login_as_user')
         </a>
     </div>
-    <div class="col-md-2 col-sm-4 col-lg-2 mb-5">
-        <button class="btn btn-sm btn-action-detail w-100 bg-warning d-flex align-items-center justify-content-center gap-4 text-white"
-            type="button">
-            <img src="{{ asset('images/cancel.png') }}" id="icon-add" alt="">
-            @lang('global.ban_user')
-        </button>
-    </div>
+    @if ($user->status == \App\Models\User::BANNED)
+        <div class="col-md-2 col-sm-4 col-lg-2 mb-5">
+            <button class="btn btn-sm btn-action-detail w-100 bg-success d-flex align-items-center justify-content-center gap-4 text-white"
+                type="button"
+                onclick="">
+                {{-- <img src="{{ asset('images/cancel.png') }}" id="icon-add" alt=""> --}}
+                <i class="fa fa-undo-alt text-white"></i>
+                @lang('global.unban_user')
+            </button>
+        </div>
+    @else
+        <div class="col-md-2 col-sm-4 col-lg-2 mb-5">
+            <button class="btn btn-sm btn-action-detail w-100 bg-warning d-flex align-items-center justify-content-center gap-4 text-white"
+                type="button"
+                onclick="openGlobalModal('{{ route('users.ban', ['id' => $id]) }}', `{{ __('global.ban_user') }}`, {footer: true, target: `target-ban-action`})">
+                <img src="{{ asset('images/cancel.png') }}" id="icon-add" alt="">
+                @lang('global.ban_user')
+            </button>
+        </div>
+    @endif
 </div>

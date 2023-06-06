@@ -56,6 +56,22 @@ class UserController extends Controller
         return to_route('dashboard');
     }
 
+    public function banUserForm($id)
+    {
+        $view = view('users.ban', compact('id'))->render();
+
+        return $this->success('Succees', ['view' => $view]);
+    }
+
+    public function banUser(Request $request, $id)
+    {
+        $this->validate($request, [
+            'reason' => 'required',
+        ]);
+
+        return $this->notify($this->service->ban($request, $id));
+    }
+
     /**
      * Show the form for creating a new resource.
      *
