@@ -23,11 +23,11 @@
         </a>
     </div>
     <div class="col-md-2 col-sm-4 col-lg-2 mb-5">
-        <button class="btn btn-sm btn-action-detail w-100 bg-dark-grey d-flex align-items-center justify-content-center gap-4 text-white"
-            type="button">
+        <a class="btn btn-sm btn-action-detail w-100 bg-dark-grey d-flex align-items-center justify-content-center gap-4 text-white"
+            href="{{ route('users.notification', $id) }}">
             <img src="{{ asset('images/bell.png') }}" id="icon-add" alt="">
             @lang('global.notifications')
-        </button>
+        </a>
     </div>
     <div class="col-md-2 col-sm-4 col-lg-2 mb-5">
         <a class="btn btn-sm btn-action-detail w-100 bg-primary d-flex align-items-center justify-content-center gap-4 text-white"
@@ -41,7 +41,7 @@
         <div class="col-md-2 col-sm-4 col-lg-2 mb-5">
             <button class="btn btn-sm btn-action-detail w-100 bg-success d-flex align-items-center justify-content-center gap-4 text-white"
                 type="button"
-                onclick="">
+                onclick="confirmUnban('{{ $id }}')">
                 {{-- <img src="{{ asset('images/cancel.png') }}" id="icon-add" alt=""> --}}
                 <i class="fa fa-undo-alt text-white"></i>
                 @lang('global.unban_user')

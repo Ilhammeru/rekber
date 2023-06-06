@@ -98,16 +98,21 @@ Route::middleware('auth')->group(function () {
     Route::get('users/show/{id}', [UserController::class, 'show'])->name('users.show');
     Route::get('users/transactions/{id}', [UserController::class, 'transactions'])->name('users.transactions');
     Route::get('users/logins/{id}', [UserController::class, 'logins'])->name('users.logins');
+    Route::get('users/notification-form/{id}', [UserController::class, 'notificationForm'])->name('users.notification-form');
+    Route::get('users/notification/{id}', [UserController::class, 'notification'])->name('users.notification');
     Route::get('users/login/{id}', [UserController::class, 'login'])->name('users.login');
     Route::get('users/balance/{id}/{type}', [UserController::class, 'balanceForm'])->name('users.add-deduct-balance');
     Route::post('users/balance/{id}', [UserController::class, 'addDeductBalance'])->name('users.balance-add-deduct');
     Route::get('users/ban/{id}', [UserController::class, 'banUserForm'])->name('users.ban');
+    Route::get('users/unban/{id}', [UserController::class, 'unbanUser'])->name('users.unban');
     Route::post('users/do-ban/{id}', [UserController::class, 'banUser'])->name('users.do-ban');
     Route::get('users/update-balance/{id}', [UserController::class, 'updateBalance'])->name('users.update-balance');
     Route::put('users/{id}', [UserController::class, 'update'])->name('users.update');
     Route::get('users/ajax/{status}', [UserController::class, 'ajax'])->name('users.ajax');
+    Route::post('users/send-manual-notification/{id}', [UserController::class, 'sendNotification'])->name('users.send-notification');
     Route::get('users/ajax-transaction/{id}', [UserController::class, 'ajaxTransaction'])->name('users.ajax-transaction');
     Route::get('users/ajax-login-history/{id}', [UserController::class, 'ajaxLoginHistory'])->name('users.ajax-login-history');
+    Route::get('users/ajax-notification/{id}', [UserController::class, 'ajaxNotification'])->name('users.ajax-notification');
 
     // Deposit
     Route::get('deposit/ajax', [DepositController::class, 'ajax'])->name('deposit.ajax');

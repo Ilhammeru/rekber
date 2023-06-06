@@ -6,9 +6,11 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Models\UserBan;
 use App\Models\UserLoginHistory;
+use App\Notifications\ManualUserNotification;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -90,6 +92,56 @@ class UserService extends Service
             ->make(true);
     }
 
+    public function datatableNotification($id)
+    {
+        $id = decrypt($id);
+        $notif = DB::table('notifications')
+            ->rightjoin('users', 'users.id', '=', 'notifications.notifiable_id')
+            ->selectRaw('
+                users.id, users.username, users.email,
+                notifications.*
+            ')
+            ->where('notifiable_id', $id)
+            ->where('type_n', 'manual-notification')
+            ->get();
+
+        return DataTables::of($notif)
+            ->addColumn('user', function ($d) {
+                return '
+                    <p class="mb-0" style="font-size: 14px; font-weight: bold;">'. $d->username .'</p>
+                    <p class="mb-0" style="font-size: 12px;">'. $d->email .'</p>
+                ';
+            })
+            ->addColumn('status', function ($d) {
+                $raw = json_decode($d->data);
+                $status = '<span class="badge badge-danger">failed</span>';
+                if (isset($raw->status)) {
+                    $status = '<span class="badge badge-success">'. $raw->status .'</span>';
+                }
+
+                return $status;
+            })
+            ->addColumn('sender', function ($d) {
+                if ($d->type_n == 'manual-notification') {
+                    $type = 'Admin';
+                } else {
+                    $type = 'System';
+                }
+
+                return $type;
+            })
+            ->addColumn('message', function ($d) {
+                $raw = json_decode($d->data);
+                return $raw->message;
+            })
+            ->addColumn('subject', function ($d) {
+                $raw = json_decode($d->data);
+                return $raw->subject;
+            })
+            ->rawColumns(['user', 'status', 'sender', 'subject', 'message'])
+            ->make(true);
+    }
+
     public function datatable($request)
     {
         $query = $this->model()->query();
@@ -129,13 +181,13 @@ class UserService extends Service
             ->addColumn('namedata', function ($data) {
                 return '
                     <p class="mb-0">'. $data->fullname .'</p>
-                    <a href="'. route('users.show', encrypt($data->id)) .'">'. $data->email .'</a>
+                    <a href="'. route('users.show', ['id' => encrypt($data->id)]) .'">'. $data->email .'</a>
                 ';
             })
             ->addColumn('action', function ($data) {
                 return '
                     <a class="btn btn-primary btn-sm cursor-pointer"
-                        href="'. route('users.show', encrypt($data->id)) .'">
+                        href="'. route('users.show', ['id' => encrypt($data->id)]) .'">
                         <i class="fa fa-eye"></i> '. __('global.detail') .'
                     </a>
                 ';
@@ -164,6 +216,25 @@ class UserService extends Service
 
     }
 
+    public function sendNotification($request, $id)
+    {
+        $user = $this->model()->find(decrypt($id));
+        $data = [
+            'subject' => $request->subject,
+            'message' => $request->real_message,
+            'type_n' => 'manual-notification',
+            'status' => 'Sent',
+        ];
+
+        $user->notify(new ManualUserNotification($data));
+
+        return [
+            'message' => __("global.success_send_notification"),
+            'data' => [],
+            'status' => 200,
+        ];
+    }
+
     public function show($id)
     {
         $id = decrypt($id);
@@ -185,6 +256,19 @@ class UserService extends Service
             $ban->reason = $request->reason;
             $ban->save();
         }
+
+        return [
+            'message' => __('global.success_update_user_status'),
+            'data' => ['id' => $id],
+            'status' => 200,
+        ];
+    }
+
+    public function unban($id)
+    {
+        $user = $this->model()->find(decrypt($id));
+        $user->status = User::ACTIVE;
+        $user->save();
 
         return [
             'message' => __('global.success_update_user_status'),

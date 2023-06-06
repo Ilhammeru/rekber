@@ -65,7 +65,13 @@ return [
     'unban_user' => 'Unban User',
     'info_of' => 'Information of',
     'submit' => 'Submit',
+    'subject' => 'Subject',
+    'back' => 'Back',
+    'sender' => 'Sender',
+    'message' => 'Message',
     'notifications' => 'Notifications',
+    'notification' => 'Notification',
+    'notification_sent_to' => 'Notification Sent To',
     'otp' => 'OTP',
     'action' => 'Action',
     'status' => 'Status',
@@ -109,6 +115,9 @@ return [
     'email_has_been_verified' => 'Your email has been verified. To continue please click the button below to enter the application.',
     'phone_has_been_verified' => 'Your phone has been verified. To continue please click the button below to enter the application.',
 
+    // confirmation
+    'confirm_unban_user' => 'Are you sure to unban this user?',
+
     // notification wording
     'otp_send' => 'Check your email and write down the OTP you see.',
     'otp_send_wa' => 'Check your whatsapp and write down the OTP you see.',
@@ -123,4 +132,5 @@ return [
     'success_delete_item' => 'Success delete item',
     'success_update_user' => 'Success update user data',
     'success_update_user_status' => 'Success update status user',
+    'success_send_notification' => 'Success send notification',
 ];

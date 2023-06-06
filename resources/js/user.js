@@ -4,7 +4,7 @@ import 'tippy.js/themes/light.css';
 import 'tippy.js/animations/scale.css';
 import { Confirm } from '../../public/plugins/custom/notiflix/build/notiflix-confirm-aio';
 
-var dt, dtTrx;
+var dt, dtTrx, notifQuill;
 var columns = [
     {data: 'id',
         render: function (data, type, row, meta) {
@@ -101,6 +101,34 @@ const initLoginHistory = (id) => {
             url: app_url + '/users/ajax-login-history/' + id,
         },
         columns: trxColumn,
+        order: [[0, 'desc']],
+    });
+}
+
+const initNotification = (id) => {
+    let notifColumn = [
+        {data: 'id',
+            render: function (data, type, row, meta) {
+                return meta.row + meta.settings._iDisplayStart + 1;
+            },
+            width: '5%',
+            className: 'text-center'
+        },
+        {data: 'user', name: 'user'},
+        {data: 'status', name: 'status'},
+        {data: 'sender', name: 'sender'},
+        {data: 'subject', name: 'subject'},
+        {data: 'message', name: 'message'},
+    ];
+    dtTrx = $('#table-user-notification').DataTable({
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        scrollX: true,
+        ajax: {
+            url: app_url + '/users/ajax-notification/' + id,
+        },
+        columns: notifColumn,
         order: [[0, 'desc']],
     });
 }
@@ -273,6 +301,75 @@ const banUser = (id) => {
     })
 }
 
+const confirmUnban = (id) => {
+    Confirm.show(
+        i18n.global.unban_user,
+        i18n.global.confirm_unban_user,
+        i18n.global.yes,
+        i18n.global.no,
+        () => {
+            unbanUser(id);
+        }
+    );
+}
+
+const initQuill = () => {
+    var options = {
+        placeholder: 'Compose an epic...',
+        theme: 'snow',
+        height: '500px',
+    };
+    notifQuill = new Quill('#editor', options);
+}
+
+const unbanUser = (id) => {
+    $.ajax({
+        type: 'GET',
+        url: app_url + '/users/unban/' + id,
+        beforeSend: function () {
+            toggleLoading(true, i18n.global.processing);
+        },
+        success: function (res) {
+            toggleLoading(false);
+            handleSuccess(res.message);
+            responseUrl(app_url + '/users/show/' + id, 800);
+        },
+        error: function (err) {
+            toggleLoading(false);
+            handleError(err);
+        }
+    })
+}
+
+const sendManualNotification = (id) => {
+    var subject = $('#form-manual-notification #subject').val();
+    var message = notifQuill.root.innerHTML;
+
+    $.ajax({
+        type: 'POST',
+        url: app_url + '/users/send-manual-notification/' + id,
+        data: {
+            subject: subject,
+            real_message: message,
+            message: notifQuill.getText(),
+        },
+        beforeSend: function () {
+            toggleLoading(true, i18n.global.processing);
+            removeValidation('form-manual-notification');
+        },
+        success: function (res) {
+            toggleLoading(false);
+            handleSuccess(res.message);
+            document.getElementById('form-manual-notification').reset();
+            notifQuill.setContents([{ insert: '\n' }]);
+        },
+        error: function (err) {
+            toggleLoading(false);
+            handleError(err);
+        }
+    })
+}
+
 $('#country').select2({
     selectionCssClass: 'form-control',
     placeholder: i18n.global.search + ' ' + i18n.global.country,
@@ -380,3 +477,9 @@ window.detailTransaction = detailTransaction;
 window.initTransactions = initTransactions;
 window.initLoginHistory = initLoginHistory;
 window.banUser = banUser;
+window.unbanUser = unbanUser;
+window.confirmUnban = confirmUnban;
+window.initQuill = initQuill;
+window.notifQuill = notifQuill;
+window.sendManualNotification = sendManualNotification;
+window.initNotification = initNotification;
