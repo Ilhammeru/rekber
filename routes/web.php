@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepositController;
+use App\Http\Controllers\PaymentGateawaySettingController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
@@ -113,9 +114,45 @@ Route::middleware('auth')->group(function () {
     Route::get('users/ajax-transaction/{id}', [UserController::class, 'ajaxTransaction'])->name('users.ajax-transaction');
     Route::get('users/ajax-login-history/{id}', [UserController::class, 'ajaxLoginHistory'])->name('users.ajax-login-history');
     Route::get('users/ajax-notification/{id}', [UserController::class, 'ajaxNotification'])->name('users.ajax-notification');
+    Route::get('/users/transaction/status/{trx}', [UserController::class, 'getStatusTransaction'])->name('users.transaction.get-status');
 
     // Deposit
     Route::get('deposit/ajax', [DepositController::class, 'ajax'])->name('deposit.ajax');
+    Route::get('deposit/image', [DepositController::class, 'showDetailImage'])->name('deposit.see-image');
     Route::resource('deposit', DepositController::class);
+    Route::get('deposit/update-deposit-rule/{gateawayId}', [DepositController::class, 'updateDepositRule'])->name('deposit.update-deposit-rule');
+    Route::get('deposit/do-confirm/{trx}', [DepositController::class, 'doConfirmDeposit'])->name('deposit.do-confirm');
+    Route::get('deposit/users/{trx}', [DepositController::class, 'detailUserDeposit'])->name('deposit.user.confirm');
+    Route::get('deposit/users/confirm/{trx}', [DepositController::class, 'confirmManualPayment'])->name('deposit.user-proof-form')->middleware(['role:user']);
+    Route::post('deposit/confirm-payment/{trx}', [DepositController::class, 'confirmPayment'])->name('deposit.confirm-payment');
+
+    // Payment Gateaway
+    Route::prefix('payment-gateaway')->group(function () {
+        Route::get('/{type}', [PaymentGateawaySettingController::class, 'index'])->name('payment-gateaway.index');
+        Route::delete('/delete/{id}', [PaymentGateawaySettingController::class, 'destroy'])->name('payment-gateaway.destroy');
+        Route::get('/create/data', [PaymentGateawaySettingController::class, 'create'])->name('payment-gateaway.create');
+        Route::post('/store/data', [PaymentGateawaySettingController::class, 'store'])->name('payment-gateaway.store');
+        Route::post('/update/data', [PaymentGateawaySettingController::class, 'update'])->name('payment-gateaway.update');
+        Route::get('/ajax/{type}', [PaymentGateawaySettingController::class, 'ajax'])->name('payment-gateaway-ajax');
+        Route::get('/edit/{id}/{type}', [PaymentGateawaySettingController::class, 'edit'])->name('payment-gateaway-edit');
+        Route::get('/user-data-form/{id}', [PaymentGateawaySettingController::class, 'userDataForm'])->name('payment_gateaway.user-data-form');
+        Route::get('/user-data/{id}', [PaymentGateawaySettingController::class, 'userData'])->name('payment-gateaway.user-data');
+        Route::post('/user-data/{id}', [PaymentGateawaySettingController::class, 'storeUserData'])->name('payment-gateaway.user-data.store');
+        Route::get('user-data/delete/{key}', [PaymentGateawaySettingController::class, 'deleteUserData'])->name('payment-gateaway.user-data.delete');
+        Route::get('/user-data/{id}/{key}/edit', [PaymentGateawaySettingController::class, 'userDataEdit'])->name('payment-gateaway.user-data.edit');
+
+        // automatic
+        Route::prefix('automatic')->group(function () {
+            Route::get('/ajax', [PaymentGateawaySettingController::class, 'ajaxAutomatic'])->name('payment-gateaway.automatic.ajax');
+            Route::get('/update', [PaymentGateawaySettingController::class, 'updateAutomatic'])->name('payment-gateaway.automatic.update');
+            Route::get('/edit/{id}', [PaymentGateawaySettingController::class, 'editAutomatic'])->name('payment-gateaway.automatic.edit');
+            Route::post('/store/{id}', [PaymentGateawaySettingController::class, 'storeAutomatic'])->name('payment-gateaway.automatic.store');
+            Route::get('/update-currency/{id}', [PaymentGateawaySettingController::class, 'updateCurrency'])->name('payment-gateaway.automatic.update-currency');
+            Route::post('/add-new-currency-form/{id}', [PaymentGateawaySettingController::class, 'addCurrencyForm'])->name('payment-gateaway.automatic.add-new-currency');
+            Route::get('/init-detail-currency/{id}', [PaymentGateawaySettingController::class, 'initDetailCurrency'])->name('payment-gateaway.automatic.init-detail-currency');
+            Route::get('/channel-tripay/{id}', [PaymentGateawaySettingController::class, 'generateTripayChannel'])->name('payment-gateaway.automatic.tripay-channel');
+            Route::get('/local-channel-tripay/{id}', [PaymentGateawaySettingController::class, 'localChannelTripay'])->name('payment-gateaway.automatic.local-tripay-channel');
+        });
+    });
 });
 

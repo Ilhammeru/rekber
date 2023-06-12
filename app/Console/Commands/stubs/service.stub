@@ -32,7 +32,7 @@ class {{class}} extends Service
 
     }
 
-    public function store($request)
+    public function store($request, $additional = null)
     {
 
     }

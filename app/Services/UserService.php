@@ -349,7 +349,7 @@ class UserService extends Service
         ];
     }
 
-    public function store($request)
+    public function store($request, $additional = null)
     {
 
     }

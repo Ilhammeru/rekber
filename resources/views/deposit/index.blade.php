@@ -8,9 +8,8 @@
     <div class="card-body">
 
         <div class="text-end">
-            <button class="btn btn-sm btn-success"
-                type="button"
-                onclick="openGlobalModal('{{ route('categories.create') }}', `{{ __('global.create_category') }}`, {footer: true, target: `target-category-action`})">@lang('global.create')</button>
+            <a class="btn btn-sm btn-success"
+                href="{{ route('deposit.create') }}">@lang('global.create')</a>
         </div>
 
         <div class="table-responsive">

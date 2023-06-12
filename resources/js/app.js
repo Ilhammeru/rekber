@@ -19,9 +19,9 @@ const handleSuccess = (message) => {
     Notify.success(message);
 }
 
-const handleError = (err) => {
+const handleError = (err, formId = null) => {
     if (err.status == 422) {
-        return handleValidationError(err);
+        return handleValidationError(err, formId);
     } else {
         return handleNormalError(err);
     }
@@ -32,13 +32,19 @@ const handleNormalError = (err) => {
     Notify.failure(error);
 }
 
-function handleValidationError(err) {
+function handleValidationError(err, formId = null) {
     let error = err.responseJSON.errors;
     for (let k in error) {
         if ($('#' + k)) {
-            $('#' + k).addClass('is-invalid');
-            $('#error-' + k).text(error[k].join(', '));
-            $('#error-' + k).addClass('d-block');
+            if (formId) {
+                $(`#${formId} #${k}`).addClass('is-invalid');
+                $(`#${formId} #error-${k}`).text(error[k].join(', '));
+                $(`#${formId} #error-${k}`).addClass('d-block');
+            } else {
+                $('#' + k).addClass('is-invalid');
+                $('#error-' + k).text(error[k].join(', '));
+                $('#error-' + k).addClass('d-block');
+            }
         }
     }
 }
@@ -96,6 +102,9 @@ const openGlobalModal = (url, title, footer = null) => {
             if ($('#globalModal .phoneFormat')) {
                 runRegexPhone();
             }
+        },
+        error: function (err) {
+            toggleLoading(false);
         }
     })
 }
@@ -119,6 +128,14 @@ const addSpinnerText = (id) => {
     `);
 }
 
+const addSpinnerHuge = (id) => {
+    $('#' + id).html(`
+        <div class="d-flex align-items-center justify-content-center">
+            <div class="spinner-huge mb-4"></div>
+        </div>
+    `);
+}
+
 window.removeValidation = removeValidation;
 window.handleValidationError = handleValidationError;
 window.toggleLoading = toggleLoading;
@@ -132,3 +149,4 @@ window.footerModal = footerModal;
 window.closeGlobalModal = closeGlobalModal;
 window.addSpinnerText = addSpinnerText;
 window.Confirm = Confirm;
+window.addSpinnerHuge = addSpinnerHuge;

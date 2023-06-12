@@ -16,7 +16,7 @@ return new class() extends Migration {
             $table->unsignedBigInteger('wallet_id');
             $table->enum('type', ['deposit', 'withdraw'])->index();
             $table->decimal('amount', 64, 0);
-            $table->boolean('confirmed');
+            $table->tinyInteger('confirmed')->comment('1 for paid/success, 2 for pending, 3 for failed');
             $table->json('meta')
                 ->nullable()
             ;

@@ -36,7 +36,7 @@ class Controller extends BaseController
         ], 500);
     }
 
-    public function valiationErrors($errors)
+    public function validationErrors($errors)
     {
         return response()->json([
             'errors' => $errors->errors(),

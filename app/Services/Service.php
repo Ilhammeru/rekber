@@ -23,7 +23,7 @@ abstract class Service
         return $this->modelQuery()->find($id, $columns);
     }
 
-    public function store($data)
+    public function store($data, $additional = null)
     {
         return $this->modelQuery()->create($data);
     }

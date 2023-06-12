@@ -17,8 +17,12 @@ trait HasWallet {
      * @param string $description
      *
      */
-    public function deposit(int|string $amount = 0, string $description = '', string $type)
-    {
+    public function deposit(
+        int|string $amount = 0,
+        string $description = '',
+        string $type,
+        $confirmed = true
+    ) {
         $wallet = $this->getWallet($this->id);
         return $this->transactionService()->makeOne(
             $wallet,
@@ -27,6 +31,7 @@ trait HasWallet {
             get_class($this),
             $this->id,
             $type,
+            $confirmed
         );
     }
 
