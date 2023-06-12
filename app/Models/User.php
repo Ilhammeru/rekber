@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\HasTransaction;
 use App\Traits\HasWallet;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -17,7 +19,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, HasUuids, HasWallet, HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, HasUuids, HasWallet, HasRoles, HasTransaction;
 
     const ACTIVE = 1;
     const BANNED = 2;
@@ -92,6 +94,11 @@ class User extends Authenticatable
     public function ban(): HasOne
     {
         return $this->hasOne(UserBan::class);
+    }
+
+    public function depositManual(): HasMany
+    {
+        return $this->hasMany(DepositManual::class, 'user_id');
     }
 
 }

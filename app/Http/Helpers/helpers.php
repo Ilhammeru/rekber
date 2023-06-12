@@ -250,3 +250,12 @@ if (!function_exists('getRealIP')) {
         return $ip;
     }
 }
+
+if (!function_exists('generate_message')) {
+    function generate_message(\Throwable $th, $error_production) {
+        $message = $th->getMessage() . ' ' . $th->getLine() . ' ' . $th->getFile();
+        if (env('APP_ENV') == 'production') return $error_production;
+
+        return $message;
+    }
+}

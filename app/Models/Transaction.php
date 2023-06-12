@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * Class Transaction.
@@ -29,6 +30,9 @@ class Transaction extends Model
     public const TYPE_DEBIT = 'debit';
     public const TYPE_CREDIT = 'credit';
     public const TYPE_WITHDRAW = 'withdraw';
+    public const SUCCESS = 1;
+    public const PENDING = 2;
+    public const FAILED = 3;
 
     /**
      * @var string[]
@@ -49,6 +53,16 @@ class Transaction extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'payable_id');
+    }
+
+    public function charge(): BelongsTo
+    {
+        return $this->belongsTo(Charge::class, 'uuid', 'trx_id');
+    }
+
+    public function depositManual(): HasOne
+    {
+        return $this->hasOne(DepositManual::class, 'trx_id', 'uuid');
     }
 
     // /**

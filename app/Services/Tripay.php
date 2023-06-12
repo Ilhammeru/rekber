@@ -10,6 +10,13 @@ class Tripay {
     public const PRIVKEY = 'qHkoc-QQoxN-NbJvX-pVCsk-5I3H2';
     public const MERCHANTCODE = 'T22672';
 
+    public $curl;
+
+    public function __construct()
+    {
+        $this->curl = new Curl;
+    }
+
     public function createSignature()
     {
         return hash_hmac(
@@ -17,6 +24,11 @@ class Tripay {
             self::MERCHANTCODE.'INV7701000000',
             self::PRIVKEY
         );
+    }
+
+    public function sandboxUrl()
+    {
+        return 'https://tripay.co.id/api-sandbox';
     }
 
     public function requestTransaction()
@@ -71,7 +83,7 @@ class Tripay {
         curl_close($curl);
 
         return [
-            'data' => json_decode($response, true),
+            'data' => json_decode($response, TRUE),
             'message' => 'Oke',
             'status' => 200,
         ];
@@ -117,5 +129,20 @@ class Tripay {
                 'success' => true,
             ];
         }
+    }
+
+    /**
+     * Function to generate channel on tripay
+     */
+    public function generateServerChannel()
+    {
+        $url = $this->sandboxUrl() . '/merchant/payment-channel';
+        $response = $this->curl->makeRequest(
+            $url,
+            'GET',
+            ['Authorization: Bearer '.self::APIKEY],
+        );
+
+        return json_decode($response, TRUE);
     }
 }

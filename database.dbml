@@ -78,9 +78,45 @@ Table transactions {
     payable_type varchar [not null]
     payable_id char [not null, note: 'Related to user id']
     wallet_id bigint [not null]
-    type enum [note: 'withdraw, deposit']
+    type enum [note: 'withdraw, deposit, debit, credit, escrow']
     amount double [note: 'decimal 64,0']
     confirmed boolean
+    created_at timestamp
+    updated_at timestamp
+}
+
+Table payment_gateaway_settings {
+    uuid char [not null, unique, increment]
+    type enum [note: 'manual and automatic']
+    name varchar [not null]
+    configuration longtext
+}
+
+Table payment_gateaway_details {
+    uuid char [not null, unique, increment]
+    payment_gateaway_setting_id char [not null]
+    currency varchar [not null]
+    symbol char
+    rate double [note: 'decimal 64,0']
+    minimum_trx double [note: 'decimal 64,0']
+    maximum_trx double [note: 'decimal 64,0']
+    fixed_charge double [note: 'decimal 64,0']
+    percent_charge tinyint
+    deposit_instruction text
+    user_field longtext
+    created_at timestamp
+    updated_at timestamp
+}
+
+Table deposits {
+    uuid char [not null, unique, increment]
+    trx_id char [not null, unique]
+    user_id char [not null, ref: > users.id]
+    amount double [note: 'decimal 64,0']
+    payment_gateaway_id char
+    automatic_channel varchar [note: 'This column is only for automatic payment']
+    status tinyint [note: '1 for paid, 2 for pending, 3 for failed']
+    field_value longtext
     created_at timestamp
     updated_at timestamp
 }

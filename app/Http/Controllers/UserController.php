@@ -215,4 +215,10 @@ class UserController extends Controller
     {
         //
     }
+
+    public function getStatusTransaction($trx)
+    {
+        $pageTitle = 'Status Payment';
+        return view('users.status-transaction', compact('pageTitle'));
+    }
 }

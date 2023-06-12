@@ -24,6 +24,8 @@ class DatabaseSeeder extends Seeder
             CountrySeeder::class,
             RolePermissionSeeder::class,
             CreateUserSeeder::class,
+            ManualGateawaySeeder::class,
+            AutomaticPaymentSeeder::class,
         ]);
     }
 }
