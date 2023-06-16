@@ -39,7 +39,7 @@ trait HasWallet {
     public function confirmDeposit(
         string $trxId
     ) {
-        $trx = Transaction::where('uuid', decrypt($trxId))->first();
+        $trx = Transaction::where('uuid', base64url_decode($trxId))->first();
         $trx->confirmed = 1;
         $trx->save();
 
