@@ -104,11 +104,7 @@ class Tripay {
         Log::debug('data callback', [$data]);
 
         if ($data->is_closed_payment === 1) {
-            Log::debug('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.');
-            Log::debug('status', [$data->status]);
-            Log::debug('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.');
             if ($data->status == 'PAID') {
-                Log::debug('checkcheckoke');
                 $this->confirmPayment->doConfirm(base64url_encode($invoiceId));
             }
 

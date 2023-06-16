@@ -15,7 +15,8 @@ class ConfirmPayment {
         try {
             // check type of transaction
             $payment_gateaway_id = \App\Models\Charge::select('payment_gateaway_id')
-                ->where('trx_id', base64url_decode($trxId));
+                ->where('trx_id', base64url_decode($trxId))
+                ->first();
             $paymentType = $this->getTransactionType(base64url_encode($payment_gateaway_id->payment_gateaway_id));
 
             if ($paymentType == 'manual') {
@@ -23,7 +24,7 @@ class ConfirmPayment {
                 $data->status = 1;
                 $data->save();
             } else {
-                $data = \App\Models\AutomaticDeposit::where("trx_id", base64url_decode($trxId));
+                $data = \App\Models\AutomaticDeposit::where("trx_id", base64url_decode($trxId))->first();
                 $data->status = \App\Models\AutomaticDeposit::SUCCESS;
                 $data->save();
             }
