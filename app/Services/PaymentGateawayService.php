@@ -47,6 +47,27 @@ class PaymentGateawayService extends Service
             ->make(true);
     }
 
+    /**
+     * Function to get channel by channel code
+     */
+    public function getAutomaticChannel($id, $channel_code)
+    {
+        $raw = PaymentGateawayDetail::select('payment_gateaway_setting_id')
+            ->with('payment:id,channel')
+            ->find($id);
+        $data = [];
+        if ($raw->payment) {
+            $data = json_decode($raw->payment->channel, TRUE) ?? [];
+        }
+
+        $out = collect($data)->filter(function ($item) use ($channel_code) {
+            return $item['code'] == $channel_code;
+        })->values();
+        $out = count($out) > 0 ? $out[0] : [];
+
+        return $out;
+    }
+
     public function datatableAutomatic()
     {
         $data = PaymentGateawaySetting::where('type', 'automatic')
@@ -169,11 +190,11 @@ class PaymentGateawayService extends Service
      */
     public function getTransactionType($id, $type = 'parent')
     {
-        if ($type == 'parent') return $this->model()->select('type')->find(decrypt($id))->type;
+        if ($type == 'parent') return $this->model()->select('type')->find(base64url_decode($id))->type;
         if ($type == 'child') {
             $data = \App\Models\PaymentGateaway\PaymentGateawayDetail::select('id', 'payment_gateaway_setting_id')
                 ->with('payment:id,type')
-                ->find(decrypt($id));
+                ->find(base64url_decode($id));
             return $data->payment->type;
         }
 
@@ -189,8 +210,8 @@ class PaymentGateawayService extends Service
         foreach ($data as $item) {
             foreach ($item->details as $detail) {
                 $out[] = (object) [
-                    'id' => $item->id,
-                    'detail_id' => $detail->id,
+                    'id' => base64url_encode($item->id),
+                    'detail_id' => base64url_encode($detail->id),
                     'currency' => $detail->currency,
                     'name' => $item->name . ' ' . $detail->currency,
                 ];

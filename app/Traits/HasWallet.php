@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Models\Transaction;
 use App\Models\Wallet;
 use App\Services\TransactionService;
 
@@ -35,6 +36,20 @@ trait HasWallet {
         );
     }
 
+    public function confirmDeposit(
+        string $trxId
+    ) {
+        $trx = Transaction::where('uuid', decrypt($trxId))->first();
+        $trx->confirmed = 1;
+        $trx->save();
+
+        $wallet = $this->getWallet($this->id);
+        $wallet->balance = $wallet->balance + floatval($trx->amount);
+        $wallet->save();
+
+        return $wallet;
+    }
+
     public function currentBalance()
     {
         $wallet = $this->getWallet();
@@ -46,7 +61,15 @@ trait HasWallet {
 
     public function getWallet()
     {
-        return Wallet::where('holder_id', $this->id)->first();
+        // make a new wallet if wallet not found
+        $wallet = Wallet::where('holder_id', $this->id)->first();
+        if (!$wallet) {
+            $wallet = $this->createWallet(
+                $this->id, get_class($this)
+            );
+        }
+
+        return $wallet;
     }
 
     public function createWallet(

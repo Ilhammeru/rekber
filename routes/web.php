@@ -123,7 +123,10 @@ Route::middleware('auth')->group(function () {
     Route::get('deposit/update-deposit-rule/{gateawayId}', [DepositController::class, 'updateDepositRule'])->name('deposit.update-deposit-rule');
     Route::get('deposit/do-confirm/{trx}', [DepositController::class, 'doConfirmDeposit'])->name('deposit.do-confirm');
     Route::get('deposit/users/{trx}', [DepositController::class, 'detailUserDeposit'])->name('deposit.user.confirm');
-    Route::get('deposit/users/confirm/{trx}', [DepositController::class, 'confirmManualPayment'])->name('deposit.user-proof-form')->middleware(['role:user']);
+    Route::get('deposit/payment-instruction/{trx}', [DepositController::class, 'paymentInstruction'])->name('deposit.payment-instruction');
+    Route::get('deposit/decline-form/{trx}', [DepositController::class, 'declineForm'])->name('deposit.decline-form');
+    Route::post('deposit/decline/{trx}', [DepositController::class, 'submitDeclineDeposit'])->name('deposit.submit-decline');
+    Route::get('deposit/users/confirm/{trx}', [DepositController::class, 'confirmManualPayment'])->name('deposit.user-proof-form');
     Route::post('deposit/confirm-payment/{trx}', [DepositController::class, 'confirmPayment'])->name('deposit.confirm-payment');
 
     // Payment Gateaway

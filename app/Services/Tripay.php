@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class Tripay {
@@ -17,11 +18,11 @@ class Tripay {
         $this->curl = new Curl;
     }
 
-    public function createSignature()
+    public function createSignature($ref, $amount)
     {
         return hash_hmac(
             'sha256',
-            self::MERCHANTCODE.'INV7701000000',
+            self::MERCHANTCODE.$ref.$amount,
             self::PRIVKEY
         );
     }
@@ -31,62 +32,38 @@ class Tripay {
         return 'https://tripay.co.id/api-sandbox';
     }
 
-    public function requestTransaction()
+    public function createPayloadRequestTransaction($product, $user, $channel, $trxUuid, $returnUrl = null)
     {
-        $data = [
-            'method'         => 'BRIVA',
-            'merchant_ref'   => 'INV770',
-            'amount'         => 1000000,
-            'customer_name'  => 'Nama Pelanggan',
-            'customer_email' => 'emailpelanggan@domain.com',
-            'customer_phone' => '081234567890',
-            'order_items'    => [
-                [
-                    'sku'         => 'FB-06',
-                    'name'        => 'Nama Produk 1',
-                    'price'       => 500000,
-                    'quantity'    => 1,
-                    'product_url' => 'https://tokokamu.com/product/nama-produk-1',
-                    'image_url'   => 'https://tokokamu.com/product/nama-produk-1.jpg',
-                ],
-                [
-                    'sku'         => 'FB-07',
-                    'name'        => 'Nama Produk 2',
-                    'price'       => 500000,
-                    'quantity'    => 1,
-                    'product_url' => 'https://tokokamu.com/product/nama-produk-2',
-                    'image_url'   => 'https://tokokamu.com/product/nama-produk-2.jpg',
-                ]
-            ],
-            'return_url'   => 'https://domainanda.com/redirect',
-            'expired_time' => (time() + (24 * 60 * 60)), // 24 jam
-            'signature'    => $this->createSignature()
-        ];
-
-        $curl = curl_init();
-
-        curl_setopt_array($curl, [
-            CURLOPT_FRESH_CONNECT  => true,
-            CURLOPT_URL            => 'https://tripay.co.id/api-sandbox/transaction/create',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HEADER         => false,
-            CURLOPT_HTTPHEADER     => ['Authorization: Bearer '.self::APIKEY],
-            CURLOPT_FAILONERROR    => false,
-            CURLOPT_POST           => true,
-            CURLOPT_POSTFIELDS     => http_build_query($data),
-            CURLOPT_IPRESOLVE      => CURL_IPRESOLVE_V4
-        ]);
-
-        $response = curl_exec($curl);
-        $error = curl_error($curl);
-
-        curl_close($curl);
-
         return [
-            'data' => json_decode($response, TRUE),
-            'message' => 'Oke',
-            'status' => 200,
+            'method'         => $channel,
+            'merchant_ref'   => $trxUuid,
+            'amount'         => (float) $product[0]['price'],
+            'customer_name'  => $user['username'],
+            'customer_email' => $user['email'],
+            'customer_phone' => $user['phone'],
+            'order_items'    => $product,
+            'return_url'   => $returnUrl,
+            'expired_time' => (time() + (24 * 60 * 60)), // 24 jam
+            'signature'    => $this->createSignature($trxUuid, (float) $product[0]['price'])
         ];
+    }
+
+    public function requestTransaction($payload)
+    {
+        // $out = $this->curl->makeRequest(
+        //     'https://tripay.co.id/api-sandbox/transaction/create',
+        //     'POST',
+        //     ['Authorization: Bearer '.self::APIKEY],
+        //     $payload,
+        // );
+
+        $out = Http::withHeaders([
+                'Authorization' => 'Bearer '.self::APIKEY
+            ])
+            ->acceptJson()
+            ->post('https://tripay.co.id/api-sandbox/transaction/create', $payload);
+
+        return json_decode($out->body(), true);
     }
 
     public function callback(Request $request)

@@ -14,6 +14,8 @@ class DepositManual extends Model
 
     const APPROVE = 1;
     const PENDING = 0;
+    const WAITING_UPLOAD = 2;
+    const DECLINE = 3;
 
     protected $fillable = [
         'user_id',
@@ -22,6 +24,7 @@ class DepositManual extends Model
         'payment_gateaway_id',
         'status',
         'field_value',
+        'reason'
     ];
 
     public function gateaway(): BelongsTo
@@ -32,5 +35,10 @@ class DepositManual extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function transaction(): BelongsTo
+    {
+        return $this->belongsTo(Transaction::class, 'trx_id', 'uuid');
     }
 }

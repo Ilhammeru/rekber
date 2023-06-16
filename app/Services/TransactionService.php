@@ -58,30 +58,41 @@ class TransactionService {
         }
     }
 
-    public function getTransactionDetail($trx)
+    public function getTransactionDetail($trx, $isNewEncode = false)
     {
-        $data = \App\Models\Transaction::with(['charge.gateaway.payment', 'user:id,username,email', 'depositManual'])
-            ->where('uuid', decrypt($trx))
+        if ($isNewEncode) {
+            $trxId = base64url_decode($trx);
+        } else {
+            $trxId = decrypt($trx);
+        }
+
+        $data = \App\Models\Transaction::with(['charge.gateaway.payment', 'user:id,username,email', 'depositManual', 'depositAutomatic'])
+            ->where('uuid', $trxId)
             ->first();
 
         // check this transaction has a file to attach or not
-        $fields = json_decode($data->charge->gateaway->user_field, TRUE);
+        $fields = json_decode($data->charge->gateaway->user_field, TRUE) ?? null;
         $has_attachments = false;
         $attachment_label = [];
-        foreach ($fields as $field) {
-            $label = $field['label'];
-            $slug = strtolower(implode('_', explode(' ', $label)));
-            if (strtolower($field['type']) == 'file') {
-                $has_attachments = true;
-                $attachment_label[] = $slug;
-            }
-        }
-        // then generate file to attach
         $path = [];
-        if ($has_attachments) {
-            $values = json_decode($data->depositManual->field_value, TRUE);
-            foreach ($attachment_label as $attachLabel) {
-                $path[] = $values[$attachLabel];
+
+        if ($fields) {
+            foreach ($fields as $field) {
+                $label = $field['label'];
+                $slug = strtolower(implode('_', explode(' ', $label)));
+                if (strtolower($field['type']) == 'file') {
+                    $has_attachments = true;
+                    $attachment_label[] = $slug;
+                }
+            }
+            // then generate file to attach
+            if ($has_attachments) {
+                $values = json_decode($data->depositManual->field_value, TRUE) ?? null;
+                if ($values) {
+                    foreach ($attachment_label as $attachLabel) {
+                        $path[] = $values[$attachLabel];
+                    }
+                }
             }
         }
 

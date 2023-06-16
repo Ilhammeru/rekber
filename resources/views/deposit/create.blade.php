@@ -12,11 +12,20 @@
                         onchange="updateDepositRule(this)">
                         <option value=""></option>
                         @foreach ($payments as $item)
-                            <option value="{{ encrypt($item->detail_id) }}">{{ $item->name }}</option>
+                            <option value="{{ $item->detail_id }}">{{ $item->name }}</option>
                         @endforeach
                     </select>
                     <div class="invalid-feedback" id="error-payment"></div>
                 </div> <!-- End Form Group -->
+
+                <div class="form-group mb-4 form-group-channel d-none">
+                    <label for="channel" class="form-label">Channel</label>
+                    <select name="channel"
+                        id="channel"
+                        class="form-control">
+                        <option value=""></option>
+                    </select>
+                </div>
 
                 <div class="form-group mb-4">
                     <label for="amount" class="form-label required">@lang('global.amount')</label>
