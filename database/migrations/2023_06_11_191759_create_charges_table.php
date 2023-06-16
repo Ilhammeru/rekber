@@ -17,9 +17,9 @@ return new class extends Migration
             $table->id();
             $table->uuid('trx_id');
             $table->uuid('payment_gateaway_id');
-            $table->float('fixed_charge')->default(0);
-            $table->float('percent_charge')->default(0);
-            $table->float('total_charge')->default(0);
+            $table->float('fixed_charge', 64,2)->default(0);
+            $table->float('percent_charge', 64,2)->default(0);
+            $table->float('total_charge', 64,2)->default(0);
             $table->timestamps();
         });
     }

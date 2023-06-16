@@ -32,11 +32,19 @@
                         <label for="status" class="col-form-label col-md-4">@lang('global.status')</label>
                         <div class="col-md-8 pt-4">
                             <div class="form-check form-switch">
+                                @php
+                                    $checked = '';
+                                    if (isset($channel['status'])) {
+                                        if ($channel['status']) {
+                                            $checked = 'checked';
+                                        }
+                                    }
+                                @endphp
                                 <input class="form-check-input"
                                     type="checkbox"
                                     role="switch"
                                     id="status_channel_{{ $kc }}"
-                                    {{ $channel['status'] ? 'checked' : '' }}
+                                    {{ $checked }}
                                     name="channels[{{$kc}}][status]">
                                 <input type="hidden"
                                     name="channels[{{$kc}}][code]"

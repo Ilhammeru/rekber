@@ -23,7 +23,7 @@ return new class extends Migration
             $table->uuid('user_id');
             $table->tinyInteger('status')
                 ->comment('1 for success, 2 for waiting payment, 3 for failed');
-            $table->float('amount');
+            $table->float('amount', 64, 2);
             $table->json('request_transaction_response')->nullable();
             $table->json('callback_response')->nullable();
             $table->json('request_transaction_payload')->nullable();

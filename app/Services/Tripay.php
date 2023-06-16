@@ -12,12 +12,12 @@ class Tripay {
     public const MERCHANTCODE = 'T22672';
 
     public $curl;
-    public $deposit;
+    public $confirmPayment;
 
     public function __construct()
     {
         $this->curl = new Curl;
-        $this->deposit = new DepositService;
+        $this->confirmPayment = new ConfirmPayment;
     }
 
     public function createSignature($ref, $amount)
@@ -105,7 +105,7 @@ class Tripay {
 
         if ($data->is_closed_payment === 1) {
             if ($data->status == 'PAID') {
-                $this->deposit->doConfirm(base64url_encode($invoiceId));
+                $this->confirmPayment->doConfirm(base64url_encode($invoiceId));
             }
 
             return [

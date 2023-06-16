@@ -21,6 +21,7 @@ class DepositService extends Service
     public $gateaway;
     public $charge;
     public $tripay;
+    public $confirmPayment;
 
     public function __construct()
     {
@@ -28,6 +29,7 @@ class DepositService extends Service
         $this->gateaway = new PaymentGateawayService;
         $this->charge = new ChargeService;
         $this->tripay = new Tripay;
+        $this->confirmPayment = new ConfirmPayment;
     }
 
     public function model(): Model
@@ -298,46 +300,7 @@ class DepositService extends Service
 
     public function doConfirm($trxId)
     {
-        DB::beginTransaction();
-
-        try {
-            // check type of transaction
-            $payment_gateaway_id = \App\Models\Charge::select('payment_gateaway_id')
-                ->where('trx_id', base64url_decode($trxId));
-            $paymentType = $this->gateaway->getTransactionType(base64url_encode($payment_gateaway_id->payment_gateaway_id));
-
-            if ($paymentType == 'manual') {
-                $data = $this->model()->where('trx_id', base64url_decode($trxId))->first();
-                $data->status = 1;
-                $data->save();
-            } else {
-                $data = \App\Models\AutomaticDeposit::where("trx_id", base64url_decode($trxId));
-                $data->status = \App\Models\AutomaticDeposit::SUCCESS;
-                $data->save();
-            }
-
-            $user = User::find($data->user_id);
-            $user->confirmDeposit($trxId);
-
-            // send notification to user
-            ConfirmedDepositJob::dispatch($user, $data)->afterCommit();
-
-            DB::commit();
-
-            return [
-                'status' => 200,
-                'message' => __('global.success_confirm_deposit'),
-                'data' => [],
-            ];
-        } catch (\Throwable $th) {
-            DB::rollBack();
-
-            return [
-                'status' => 500,
-                'message' => generate_message($th, __('global.failed_confirm_deposit')),
-                'data' => [],
-            ];
-        }
+        return $this->confirmPayment->doConfirm($trxId);
     }
 
     public function declineDeposit(Request $request, $trx)

@@ -27,10 +27,10 @@ return new class extends Migration
             $table->uuid('payment_gateaway_setting_id');
             $table->string('currency', 10);
             $table->string('symbol', 3)->nullable();
-            $table->float('rate');
-            $table->float('minimum_trx');
-            $table->float('maximum_trx');
-            $table->float('fixed_charge');
+            $table->float('rate', 64,2);
+            $table->float('minimum_trx', 64,2);
+            $table->float('maximum_trx', 64,2);
+            $table->float('fixed_charge', 64,2);
             $table->tinyInteger('percent_charge');
             $table->text('deposit_instruction')->nullable();
             $table->json('user_field')->nullable();

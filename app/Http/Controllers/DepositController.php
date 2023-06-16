@@ -36,7 +36,6 @@ class DepositController extends Controller
      */
     public function index()
     {
-        return 'oke';
         $pageTitle = __('global.deposit');
         return view('deposit.index', compact('pageTitle'));
     }
