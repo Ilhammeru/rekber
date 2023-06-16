@@ -36,6 +36,7 @@ class DepositController extends Controller
      */
     public function index()
     {
+        return 'oke';
         $pageTitle = __('global.deposit');
         return view('deposit.index', compact('pageTitle'));
     }
@@ -147,12 +148,12 @@ class DepositController extends Controller
 
         $data = $this->trx->getTransactionDetail($trx);
         $isManualPayment = true;
-        if ($data->depositAutomatic) {
+        if ($data['depositAutomatic']) {
             $isManualPayment = false;
         }
         $transaction_data = [
-            'request_amount' => $isManualPayment ? number_format($data->depositManual->amount) : number_format($data->depositAutomatic->amount),
-            'transfer_amount' => $isManualPayment ? number_format((float) $data->depositManual->amount + (float) $data->charge->total_charge) : number_format((float) $data->depositAutomatic->amount + (float) $data->charge->total_charge),
+            'request_amount' => $isManualPayment ? number_format($data['depositManual']['amount']) : number_format($data['depositAutomatic']['amount']),
+            'transfer_amount' => $isManualPayment ? number_format((float) $data['depositManual']['amount'] + (float) $data['charge']['total_charge']) : number_format((float) $data['depositAutomatic']['amount'] + (float) $data['charge']['total_charge']),
         ];
 
         // build status
@@ -241,7 +242,7 @@ class DepositController extends Controller
         DB::beginTransaction();
         try {
             $raw = $this->trx->getTransactionDetail($trx);
-            $fields = json_decode($raw->charge->gateaway->user_field, TRUE);
+            $fields = json_decode($raw['charge']['gateaway']['user_field'], TRUE);
 
             $payload = [];
             $out = [];
@@ -261,9 +262,9 @@ class DepositController extends Controller
 
             // $out['trx_id'] = decrypt($trx);
             $out['user_id'] = Auth::id();
-            $out['amount'] = $raw->amount;
+            $out['amount'] = $raw['amount'];
             $out['status'] = \App\Models\DepositManual::PENDING;
-            $out['payment_gateaway_id'] = $raw->charge->payment_gateaway_id;
+            $out['payment_gateaway_id'] = $raw['charge']['payment_gateaway_id'];
             $out['field_value'] = json_encode($payload);
             \App\Models\DepositManual::where('trx_id', decrypt($trx))
                 ->update($out);
@@ -288,12 +289,12 @@ class DepositController extends Controller
         $pageTitle = 'Payment Instructino';
         $data = $this->trx->getTransactionDetail($trx, true);
         // validasi user
-        if (auth()->id() != $data->user->id) {
+        if (auth()->id() != $data['user']['id']) {
             abort(419);
         }
 
-        $channels = json_decode($data->charge->gateaway->payment->channel, true);
-        $third_party_response = json_decode($data->depositAutomatic->request_transaction_response, true);
+        $channels = json_decode($data['charge']['gateaway']['payment']['channel'], true);
+        $third_party_response = json_decode($data['depositAutomatic']['request_transaction_response'], true);
         $payment_method = $third_party_response['data']['payment_method'];
         $selected_channel = collect($channels)->filter(function ($item) use ($payment_method) {
             return $item['code'] == $payment_method;
