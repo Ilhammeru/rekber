@@ -10,6 +10,18 @@
         <span class="menu-title">@lang('global.category')</span>
     </a>
 </div>
+<div class="menu-item">
+    <a class="menu-link {{ active_menu(['deposit']) }}" href="{{ route('deposit.index') }}">
+        <span class="menu-icon">
+            <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
+            <span class="svg-icon svg-icon-2">
+                <i class="fa fa-money"></i>
+            </span>
+            <!--end::Svg Icon-->
+        </span>
+        <span class="menu-title">@lang('global.deposit')</span>
+    </a>
+</div>
 <div data-kt-menu-trigger="click" class="menu-item menu-accordion {{ \Request::segment(1) == 'users' ? 'show' : '' }}">
     <span class="menu-link">
         <span class="menu-icon">

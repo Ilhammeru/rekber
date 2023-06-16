@@ -7,16 +7,19 @@
 
     <div class="card-body">
 
-        <div class="text-end">
-            <a class="btn btn-sm btn-success"
-                href="{{ route('deposit.create') }}">@lang('global.create')</a>
-        </div>
+        @role('user')
+            <div class="text-end">
+                <a class="btn btn-sm btn-success"
+                    href="{{ route('deposit.create') }}">@lang('global.create')</a>
+            </div>
+        @endrole
 
         <div class="table-responsive">
             <table class="table" id="table-deposit">
                 <thead>
                     <tr class="fw-bold fs-5">
                         <th>#</th>
+                        <th>@lang('global.payment_gateaway')</th>
                         <th>@lang('global.amount')</th>
                         <th>@lang('global.status')</th>
                         <th>@lang('global.action')</th>

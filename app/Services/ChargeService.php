@@ -41,7 +41,7 @@ class ChargeService extends Service
             'fixed_charge' => $request->fixed_charge,
             'percent_charge' => $request->percent_charge,
             'total_charge' => $request->charge_total,
-            'payment_gateaway_id' => decrypt($request->payment),
+            'payment_gateaway_id' => base64url_decode($request->payment),
         ]);
     }
 

@@ -16,6 +16,7 @@ class Controller extends BaseController
         return response()->json([
             'data' => $data,
             'message' => $message,
+            'success' => true,
         ], 200);
     }
 
@@ -33,6 +34,7 @@ class Controller extends BaseController
         return response()->json([
             'data' => $data,
             'message' => $message,
+            'success' => false,
         ], 500);
     }
 
@@ -41,6 +43,7 @@ class Controller extends BaseController
         return response()->json([
             'errors' => $errors->errors(),
             'message' => 'Validation errors',
+            'success' => false,
         ], 422);
     }
 
@@ -49,6 +52,7 @@ class Controller extends BaseController
         return response()->json([
             'errors' => $data,
             'message' => 'Validation errors',
+            'success' => false,
         ], 422);
     }
 

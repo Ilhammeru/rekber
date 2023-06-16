@@ -17,9 +17,10 @@ const init = () => {
                 width: '5%',
                 className: 'text-center'
             },
+            {data: 'payment_gateaway', name: 'payment_gateaway'},
             {data: 'amount', name: 'amount'},
             {data: 'status', name: 'status'},
-            {data: 'action', name: 'action', className: 'text-center', orderable: false},
+            {data: 'action', name: 'action', orderable: false},
         ],
         order: [[0, 'desc']],
     });
@@ -30,6 +31,10 @@ const updateDepositRule = (e) => {
     $.ajax({
         type: 'GET',
         url: app_url + '/deposit/update-deposit-rule/' + id,
+        beforeSend: function () {
+            $('#channel').html('');
+            $('.form-group-channel').addClass('d-none');
+        },
         success: function (res) {
             console.log('res',res);
             $('.deposit-rule #minimum_value').val(res.data.detail.minimum_trx);
@@ -46,6 +51,22 @@ const updateDepositRule = (e) => {
             } else {
                 $('#target-conversion-rate').addClass('d-none');
             }
+
+            // update channel
+
+            var optChannel = '';
+            if (res.data.channel.length) {
+                $('.form-group-channel').removeClass('d-none');
+                optChannel = '<option></option>';
+                for (let a = 0; a < res.data.channel.length; a++) {
+                    optChannel += `<option value="${res.data.channel[a].code}">${res.data.channel[a].name}</option>`;
+                }
+                $('#channel').html(optChannel);
+                $('#channel').select2({
+                    placeholder: 'Channel',
+                });
+            }
+
             $('.deposit-rule').removeClass('d-none');
 
             updatePayableAndCharge();
@@ -90,10 +111,17 @@ const submitDeposit = () => {
             removeValidation('form-deposit');
         },
         success: function (res) {
-            toggleLoading(false);
             console.log('res',res);
+            var url;
+            if (res.data.url) {
+                url = res.data.url;
+            } else if (res.data.return_url) {
+                url = res.data.return_url;
+            }
+
+            toggleLoading(false);
             handleSuccess(res.message);
-            responseUrl(res.data.url);
+            responseUrl(url, 1200);
         },
         error: function (err) {
             toggleLoading(false);
@@ -131,6 +159,18 @@ const sendPaymentProof = (trx) => {
     })
 }
 
+const confirmDeposit = (trxId) => {
+    Confirm.show(
+        i18n.global.confirm + ' ' + i18n.global.deposit,
+        i18n.global.confirm_deposit_text,
+        i18n.global.yes,
+        i18n.global.no,
+        () => {
+            doConfirmDeposit(trxId)
+        }
+    );
+}
+
 const doConfirmDeposit = (trxId) => {
     $.ajax({
         type: 'GET',
@@ -150,7 +190,49 @@ const doConfirmDeposit = (trxId) => {
     })
 }
 
+const confirmApproveDeposit = (trx) => {
+    Confirm.show(
+        i18n.global.are_you_sure,
+        i18n.global.confirm_approve_text,
+        i18n.global.yes,
+        i18n.global.no,
+        () => {
+            doConfirmDeposit(trx);
+        }
+    )
+}
+
+const submitReason = (trx) => {
+    let form = $('#form-decline').serializeArray();
+
+    $.ajax({
+        type: 'POST',
+        url: app_url + '/deposit/decline/' + trx,
+        data: form,
+        beforeSend: function () {
+            toggleLoading(true, i18n.global.processing);
+            removeValidation('form-decline');
+        },
+        success: function (res) {
+            toggleLoading(false);
+            handleSuccess(res.message);
+            responseUrl(res.data.url, 1200);
+        },
+        error: function (err) {
+            toggleLoading(false);
+            handleError(err);
+        }
+    });
+}
+
 window.updateDepositRule = updateDepositRule;
 window.updatePayableAndCharge = updatePayableAndCharge;
 window.submitDeposit = submitDeposit;
 window.sendPaymentProof = sendPaymentProof;
+window.init = init;
+window.confirmDeposit = confirmDeposit;
+window.doConfirmDeposit = doConfirmDeposit;
+window.confirmApproveDeposit = confirmApproveDeposit;
+window.submitReason = submitReason;
+
+init();

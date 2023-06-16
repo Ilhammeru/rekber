@@ -65,6 +65,11 @@ class Transaction extends Model
         return $this->hasOne(DepositManual::class, 'trx_id', 'uuid');
     }
 
+    public function depositAutomatic(): HasOne
+    {
+        return $this->hasOne(AutomaticDeposit::class, 'trx_id', 'uuid');
+    }
+
     // /**
     //  * @var array<string, string>
     //  */
