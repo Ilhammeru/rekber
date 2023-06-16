@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Jobs\ConfirmedDepositJob;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ConfirmPayment {
     public function doConfirm($trxId)
@@ -42,6 +43,8 @@ class ConfirmPayment {
             ];
         } catch (\Throwable $th) {
             DB::rollBack();
+
+            Log::debug('error confirm', [$th->getMessage() . $th->getLine() . $th->getFile()]);
 
             return [
                 'status' => 500,
