@@ -139,7 +139,7 @@ class DepositService extends Service
             [
                 'sku'         => 'FB-06',
                 'name'        => 'Deposit - ' . auth()->user()->email,
-                'price'       => $request->amount,
+                'price'       => $request->payable,
                 'quantity'    => 1,
                 'product_url' => null,
                 'image_url'   => null,
@@ -301,9 +301,20 @@ class DepositService extends Service
         DB::beginTransaction();
 
         try {
-            $data = $this->model()->where('trx_id', decrypt($trxId))->first();
-            $data->status = 1;
-            $data->save();
+            // check type of transaction
+            $payment_gateaway_id = \App\Models\Charge::select('payment_gateaway_id')
+                ->where('trx_id', base64url_decode($trxId));
+            $paymentType = $this->gateaway->getTransactionType(base64url_encode($payment_gateaway_id->payment_gateaway_id));
+
+            if ($paymentType == 'manual') {
+                $data = $this->model()->where('trx_id', base64url_decode($trxId))->first();
+                $data->status = 1;
+                $data->save();
+            } else {
+                $data = \App\Models\AutomaticDeposit::where("trx_id", base64url_decode($trxId));
+                $data->status = \App\Models\AutomaticDeposit::SUCCESS;
+                $data->save();
+            }
 
             $user = User::find($data->user_id);
             $user->confirmDeposit($trxId);

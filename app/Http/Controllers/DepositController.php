@@ -225,12 +225,13 @@ class DepositController extends Controller
     {
         $pageTitle = 'Confirm Payment';
         $raw = $this->trx->getTransactionDetail($trx);
-        if ($raw->depositManual->status != 2) {
+
+        if ($raw['depositManual']['status'] != 2) {
             return redirect()->to(route('deposit.index'));
         }
         // return $raw;
         // EmailNotificationForCheckPayment::dispatch($raw);
-        $fields = json_decode($raw->charge->gateaway->user_field, TRUE);
+        $fields = json_decode($raw['charge']['gateaway']['user_field'], TRUE);
 
         return view('deposit.proof_form', compact('pageTitle', 'fields', 'trx', 'raw'));
     }

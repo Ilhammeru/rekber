@@ -190,13 +190,18 @@ class PaymentGateawayService extends Service
      */
     public function getTransactionType($id, $type = 'parent')
     {
-        if ($type == 'parent') return $this->model()->select('type')->find(base64url_decode($id))->type;
-        if ($type == 'child') {
+        $data = $this->model()->select('type')->find(base64url_decode($id));
+        if (!$data) {
             $data = \App\Models\PaymentGateaway\PaymentGateawayDetail::select('id', 'payment_gateaway_setting_id')
                 ->with('payment:id,type')
                 ->find(base64url_decode($id));
-            return $data->payment->type;
+            $type = $data->payment->type;
+        } else {
+            $type = $data->type;
         }
+
+
+        return $type;
 
         return null;
     }

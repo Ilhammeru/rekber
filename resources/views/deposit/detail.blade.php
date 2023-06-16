@@ -105,7 +105,7 @@
                         </button>
                         <button class="btn btn-primary w-100"
                             type="button"
-                            onclick="confirmDeposit('{{ encrypt($data->charge->trx_id) }}')">@lang('global.confirm')</button>
+                            onclick="confirmDeposit('{{ base64url_encode($data->charge->trx_id) }}')">@lang('global.confirm')</button>
                     </div>
                 @elseif ($data->depositManual->status == \App\Models\DepositManual::DECLINE)
                     <div class="d-flex align-items-center justify-content-between button-action gap-5">

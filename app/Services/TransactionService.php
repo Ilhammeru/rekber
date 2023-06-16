@@ -58,6 +58,13 @@ class TransactionService {
         }
     }
 
+    /**
+     * Function to get transaction detail
+     * @param string $trx
+     * @param boolean $isNewEncode
+     *
+     * @return array
+     */
     public function getTransactionDetail($trx, $isNewEncode = false)
     {
         if ($isNewEncode) {
